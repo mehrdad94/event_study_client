@@ -3,14 +3,10 @@ import { EventAdd } from './EventAdd'
 import enzyme from '../../../lib/enzyme'
 import 'bootstrap'
 
-it('should check toggle modal', () => {
-    const props = {
-        isActive: true
-    }
-
-    const wrapper = enzyme.mount(<EventAdd {...props}/>)
+it('should render without crash', () => {
+    const wrapper = enzyme.mount(<EventAdd/>)
 
     const modalComponent = wrapper.find('.modal')
 
-    expect(modalComponent.hasClass('show')).toBe(true)
+    expect(modalComponent.hasClass('modal')).toBe(true)
 })

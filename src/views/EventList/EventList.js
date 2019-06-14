@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { EventItem } from './EventItem/EventItem'
 export class EventList extends React.Component {
     renderEvents = () => {
@@ -7,11 +7,11 @@ export class EventList extends React.Component {
 
     render() {
         return (
-            <div>
+            <Fragment>
                 <ul className="m-0 p-0 mT-20 eventItems">
                     { this.renderEvents() }
                 </ul>
-            </div>
+            </Fragment>
         )
     }
 }
