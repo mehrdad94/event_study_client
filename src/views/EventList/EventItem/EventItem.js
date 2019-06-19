@@ -1,12 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export class EventItem extends React.Component {
     render() {
         const { title, description, date } = this.props
         return (
             <li className="bdB peers ai-c jc-sb fxw-nw">
-                <a href="javascript:void(0);"
-                   data-toggle="modal"
+                <a data-toggle="modal"
                    className="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
                     <div className="peer">
                         <span className="fw-600 eventItemTitle">{title}</span>
@@ -31,4 +31,14 @@ export class EventItem extends React.Component {
             </li>
         )
     }
+}
+
+EventItem.propTypes = {
+    title: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    description: PropTypes.string
+}
+
+EventItem.defaultProps = {
+    description: '...'
 }

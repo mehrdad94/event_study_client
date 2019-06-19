@@ -3,15 +3,13 @@ import { EventItem } from './EventItem'
 import enzyme from '../../../lib/enzyme'
 
 it('should check props', () => {
-    const wrapper = enzyme.shallow(<EventItem/>)
-
     const props = {
         title: 'title',
         date: 'date',
         description: 'description'
     }
 
-    wrapper.setProps(props)
+    const wrapper = enzyme.shallow(<EventItem {...props}/>)
 
     const titleComponent = wrapper.find('.eventItemTitle')
     const dateComponent = wrapper.find('.eventItemDate')

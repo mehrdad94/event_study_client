@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import './Loader.scss'
 
 export class Loader extends React.Component {
@@ -13,4 +14,11 @@ export class Loader extends React.Component {
             </div>
         )
     }
+}
+
+Loader.propTypes = {
+    active: PropTypes.bool
+}
+Loader.defaultProps = {
+    active: false
 }

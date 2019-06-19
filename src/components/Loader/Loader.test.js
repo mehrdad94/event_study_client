@@ -5,11 +5,11 @@ import enzyme from '../../lib/enzyme'
 it('renders without crashing and should activate Loader', () => {
     const wrapper = enzyme.shallow(<Loader/>)
 
-    expect(wrapper.find('#Loader').hasClass('fadeOut')).toBe(true)
+    expect(wrapper.find('#loader').hasClass('fadeOut')).toBe(true)
 
     wrapper.setProps({
         active: true
     })
 
-    expect(wrapper.find('#Loader').hasClass('true')).toBe(false)
+    expect(wrapper.find('#loader').hasClass('true')).toBe(false)
 })
