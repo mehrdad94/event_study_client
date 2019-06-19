@@ -50,7 +50,8 @@ EventItem.propTypes = {
     title: PropTypes.string,
     date: PropTypes.string,
     description: PropTypes.string,
-    onDeleteClick: PropTypes.func
+    onDeleteClick: PropTypes.func,
+    onEditClick: PropTypes.func
 }
 
 EventItem.defaultProps = {

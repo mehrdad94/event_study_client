@@ -39,6 +39,34 @@ it('should show confirm dialog when user clicks on delete button', function () {
 
     deleteButton.simulate('click')
 
-    expect(wrapper.state('isConfirmModalActive')).toBe(true)
+    expect(wrapper.state('isConfirmDialogActive')).toBe(true)
     expect(wrapper.find('.question').text().length > 1).toBe(true)
+})
+
+it('should show edit dialog when user clicks on edit button', function () {
+    const props = {
+        items: [
+            {
+                title: 'title',
+                date: 'date',
+                description: 'description'
+            }
+        ]
+    }
+
+    const wrapper = enzyme.mount(<EventList {...props}/>)
+
+    const editButton = wrapper.find('.edit-icon-btn')
+
+    editButton.simulate('click')
+
+    const findElement = elm => wrapper.find(elm)
+
+    const titleField = () => findElement('#eventAddTitle')
+    const dateField = () => findElement('#eventAddDate')
+    const descriptionField = () => findElement('#eventAddDescription')
+
+    expect(titleField().props().value).toBe(props.items[0].title)
+    expect(dateField().props().value).toBe(props.items[0].date)
+    expect(descriptionField().props().value).toBe(props.items[0].description)
 })

@@ -4,14 +4,20 @@ import $ from 'jquery'
 
 let jqueryModalRef
 
-export class EventAdd extends React.Component {
+const genState = props => {
+    const { title = '', date = '', description = '' } = props
+
+    return {
+        title,
+        date,
+        description
+    }
+}
+
+export class EventAddOrEdit extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            title: '',
-            date: '',
-            description: ''
-        }
+        this.state = genState(props)
     }
 
     static showModal () {
@@ -25,18 +31,32 @@ export class EventAdd extends React.Component {
     componentDidMount (){
         jqueryModalRef = $(this.refs.modal)
 
-        jqueryModalRef.on('hidden.bs.modal', e => { this.props.onModalClose(e) })
+        jqueryModalRef.on('hidden.bs.modal', e => {
+            // this.clearState()
+            this.props.onModalClose(e)
+        })
 
         jqueryModalRef.on('shown.bs.modal', e => { this.props.onModalOpen(e) })
 
-        if (this.props.isActive) EventAdd.showModal()
+        if (this.props.isActive) EventAddOrEdit.showModal()
 
         $('.event-date').datepicker()
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.isActive !== prevProps.isActive) {
-            this.props.isActive ? EventAdd.showModal() : EventAdd.hideModal()
+            this.props.isActive ? EventAddOrEdit.showModal() : EventAddOrEdit.hideModal()
+        }
+
+        // check for changing state
+        if (this.props.title !== prevProps.title) {
+            this.setState({ title: this.props.title })
+        }
+        if (this.props.date !== prevProps.date) {
+            this.setState({ date: this.props.date })
+        }
+        if (this.props.description !== prevProps.description) {
+            this.setState({ description: this.props.description })
         }
     }
 
@@ -50,7 +70,7 @@ export class EventAdd extends React.Component {
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="bd p-15">
-                            <h5 className="m-0">Add Event</h5>
+                            <h5 className="m-0 dialog-title">{this.props.dialogTitle}</h5>
                         </div>
                         <div className="modal-body">
                             <form>
@@ -100,14 +120,22 @@ export class EventAdd extends React.Component {
     }
 }
 
-EventAdd.propTypes = {
+EventAddOrEdit.propTypes = {
     isActive: PropTypes.bool,
     onModalClose: PropTypes.func,
-    onModalOpen: PropTypes.func
+    onModalOpen: PropTypes.func,
+    dialogTitle: PropTypes.string,
+    title: PropTypes.string,
+    date: PropTypes.string,
+    description: PropTypes.string
 }
 
-EventAdd.defaultProps = {
+EventAddOrEdit.defaultProps = {
     isActive: false,
     onModalClose: () => {},
-    onModalOpen: () => {}
+    onModalOpen: () => {},
+    dialogTitle: '',
+    title: '',
+    date: '',
+    description: ''
 }

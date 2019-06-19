@@ -1,42 +1,59 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { EventItem } from './EventItem/EventItem'
-import { EventAdd } from './EventAdd/EventAdd'
+import { EventAddOrEdit } from './EventAddOrEdit/EventAddOrEdit'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
-
+const addEventDialogTitle = 'Add Event'
+const editEventDialogTitle = 'Edit Event'
 export class EventList extends React.Component {
     state = {
-        isEventAddModalActive: false,
-        isConfirmModalActive: false
+        eventDialogTitle: '',
+        eventDialogProps: {},
+        isEventDialogActive: false,
+        isConfirmDialogActive: false
     }
 
     onDeleteClick = () => {
         this.setState({
-            isConfirmModalActive: true
+            isConfirmDialogActive: true
+        })
+    }
+
+    onEditClick = (index) => {
+        this.setState({
+            isEventDialogActive: true,
+            eventDialogTitle: editEventDialogTitle,
+            eventDialogProps: this.props.items[index]
         })
     }
 
     renderEvents = () => {
-        return this.props.items.map((item, index) => <EventItem onDeleteClick={this.onDeleteClick} key={index} {...item}/>)
+        return this.props.items.map((item, index) => <EventItem onDeleteClick={this.onDeleteClick} onEditClick={() => this.onEditClick(index)} key={index} {...item}/>)
     }
 
     onPlusClick = () => {
         this.setState({
-            isEventAddModalActive: true
+            isEventDialogActive: true,
+            eventDialogTitle: addEventDialogTitle,
+            eventDialogProps: {
+                title: '',
+                date: '',
+                description: ''
+            }
         })
     }
 
     onEventAddModalClose = () => {
         this.setState({
-            isEventAddModalActive: false
+            isEventDialogActive: false
         })
     }
 
     onConfirmModalClose = () => {
         this.setState({
-            isConfirmModalActive: false
+            isConfirmDialogActive: false
         })
     }
 
@@ -61,10 +78,15 @@ export class EventList extends React.Component {
                     </div>
                 </div>
 
-                <EventAdd isActive={this.state.isEventAddModalActive}
-                          onModalClose={this.onEventAddModalClose}/>
+                {/* Add and Edit Dialog */}
+                <EventAddOrEdit isActive={this.state.isEventDialogActive}
+                                dialogTitle={this.state.eventDialogTitle}
+                                onModalClose={this.onEventAddModalClose}
+                                {...this.state.eventDialogProps}/>
 
-                <ConfirmModal isActive={this.state.isConfirmModalActive}
+
+                {/* Delete Confirm Dialog*/}
+                <ConfirmModal isActive={this.state.isConfirmDialogActive}
                               onModalClose={this.onConfirmModalClose}
                               question={deleteConfirmModalQuestion}/>
             </Fragment>
