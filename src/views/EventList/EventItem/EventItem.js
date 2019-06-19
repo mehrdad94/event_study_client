@@ -2,8 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export class EventItem extends React.Component {
+    onDeleteClick = e => {
+        this.props.onDeleteClick(e)
+    }
+
+    onEditClick = e => {
+        this.props.onEditClick(e)
+    }
+
     render() {
         const { title, description, date } = this.props
+
         return (
             <li className="bdB peers ai-c jc-sb fxw-nw">
                 <a data-toggle="modal"
@@ -18,12 +27,16 @@ export class EventItem extends React.Component {
                 </a>
                 <div className="peers mR-15">
                     <div className="peer">
-                        <a href="#" className="td-n c-deep-purple-500 cH-blue-500 fsz-md p-5">
+                        <a href="#"
+                           className="td-n c-deep-purple-500 cH-blue-500 fsz-md p-5 edit-icon-btn"
+                           onClick={this.onEditClick}>
                             <i className="ti-pencil"/>
                         </a>
                     </div>
                     <div className="peer">
-                        <a href="#" className="td-n c-red-500 cH-blue-500 fsz-md p-5">
+                        <a href="#"
+                           className="td-n c-red-500 cH-blue-500 fsz-md p-5 delete-icon-btn"
+                           onClick={this.onDeleteClick}>
                             <i className="ti-trash"/>
                         </a>
                     </div>
@@ -34,11 +47,16 @@ export class EventItem extends React.Component {
 }
 
 EventItem.propTypes = {
-    title: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
-    description: PropTypes.string
+    title: PropTypes.string,
+    date: PropTypes.string,
+    description: PropTypes.string,
+    onDeleteClick: PropTypes.func
 }
 
 EventItem.defaultProps = {
-    description: '...'
+    title: '',
+    date: '',
+    description: '...',
+    onDeleteClick: () => {},
+    onEditClick: () => {}
 }

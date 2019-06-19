@@ -2,14 +2,24 @@ import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { EventItem } from './EventItem/EventItem'
 import { EventAdd } from './EventAdd/EventAdd'
+import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
+
+const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
 
 export class EventList extends React.Component {
     state = {
-        isEventAddModalActive: false
+        isEventAddModalActive: false,
+        isConfirmModalActive: false
+    }
+
+    onDeleteClick = () => {
+        this.setState({
+            isConfirmModalActive: true
+        })
     }
 
     renderEvents = () => {
-        return this.props.items.map((item, index) => <EventItem key={index} {...item}/>)
+        return this.props.items.map((item, index) => <EventItem onDeleteClick={this.onDeleteClick} key={index} {...item}/>)
     }
 
     onPlusClick = () => {
@@ -21,6 +31,12 @@ export class EventList extends React.Component {
     onEventAddModalClose = () => {
         this.setState({
             isEventAddModalActive: false
+        })
+    }
+
+    onConfirmModalClose = () => {
+        this.setState({
+            isConfirmModalActive: false
         })
     }
 
@@ -47,6 +63,10 @@ export class EventList extends React.Component {
 
                 <EventAdd isActive={this.state.isEventAddModalActive}
                           onModalClose={this.onEventAddModalClose}/>
+
+                <ConfirmModal isActive={this.state.isConfirmModalActive}
+                              onModalClose={this.onConfirmModalClose}
+                              question={deleteConfirmModalQuestion}/>
             </Fragment>
         )
     }

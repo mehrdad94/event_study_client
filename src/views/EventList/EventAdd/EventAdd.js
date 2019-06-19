@@ -22,7 +22,7 @@ export class EventAdd extends React.Component {
         jqueryModalRef.modal('hide')
     }
 
-    componentDidMount(){
+    componentDidMount (){
         jqueryModalRef = $(this.refs.modal)
 
         jqueryModalRef.on('hidden.bs.modal', e => { this.props.onModalClose(e) })
@@ -34,7 +34,7 @@ export class EventAdd extends React.Component {
         $('.event-date').datepicker()
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate (prevProps) {
         if (this.props.isActive !== prevProps.isActive) {
             this.props.isActive ? EventAdd.showModal() : EventAdd.hideModal()
         }
