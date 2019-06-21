@@ -4,14 +4,6 @@ import enzyme from '../../lib/enzyme'
 import 'bootstrap'
 import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'
 
-it('should check rendered elements', () => {
-    const wrapper = enzyme.shallow(<EventList/>)
-
-    const itemsComponent = wrapper.find('#event-items')
-
-    expect(itemsComponent.children().length).toBe(1)
-})
-
 it('should show confirm dialog when user clicks on delete button', function () {
     const wrapper = enzyme.mount(<EventList/>)
 
