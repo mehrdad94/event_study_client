@@ -1,6 +1,7 @@
 import React from 'react'
 import { EventList } from './views/EventList/EventList'
 import { PriceList} from './views/PriceList/PriceList'
+import { Chart } from './views/Chart/Chart'
 
 function App () {
   return (
@@ -18,7 +19,8 @@ function App () {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-12">
+                  <div className="col-md-12 pt-3">
+                    <Chart/>
                   </div>
                 </div>
               </div>
