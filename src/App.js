@@ -1,13 +1,6 @@
 import React from 'react'
 import { EventList } from './views/EventList/EventList'
-
-const items = [
-  {
-    title: 'All Day Event',
-    description: 'Website Development',
-    date: 'Nov 01'
-  }
-]
+import { PriceList} from './views/PriceList/PriceList'
 
 function App () {
   return (
@@ -18,9 +11,14 @@ function App () {
               <div className="container-fluid">
                 <div className="row">
                   <div className="col-md-4">
-                    <EventList items={items}/>
+                    <EventList/>
                   </div>
                   <div className="col-md-8">
+                    <PriceList/>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
                   </div>
                 </div>
               </div>

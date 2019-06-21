@@ -32,3 +32,13 @@ it('should check props', () => {
 
     expect(wrapper.find('.question').text()).toBe(question)
 })
+
+it('should call on accept', function () {
+    const onAccept = () => {
+        expect(true).toBe(true)
+    }
+
+    const wrapper = enzyme.mount(<ConfirmModal onAccept={onAccept}/>)
+
+    wrapper.find('.confirm-dialog .btn-primary').simulate('click')
+})

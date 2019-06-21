@@ -15,8 +15,7 @@ export class EventItem extends React.Component {
 
         return (
             <li className="bdB peers ai-c jc-sb fxw-nw">
-                <a data-toggle="modal"
-                   className="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
+                <a className="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
                     <div className="peer">
                         <span className="fw-600 eventItemTitle">{title}</span>
                         <div className="c-grey-600">

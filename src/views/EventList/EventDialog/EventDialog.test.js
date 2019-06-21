@@ -1,5 +1,5 @@
 import React from 'react'
-import { EventAddOrEdit } from './EventAddOrEdit'
+import { EventDialog } from './EventDialog'
 import enzyme from '../../../lib/enzyme'
 import 'bootstrap'
 import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'
@@ -10,7 +10,7 @@ it('should call on modal open', function (done) {
         done()
     }
 
-    enzyme.mount(<EventAddOrEdit isActive={true} onModalOpen={onModalOpen}/>)
+    enzyme.mount(<EventDialog isActive={true} onModalOpen={onModalOpen}/>)
 })
 
 it('should call on modal close', function (done) {
@@ -24,11 +24,11 @@ it('should call on modal close', function (done) {
         wrapper.update()
     }
 
-    const wrapper = enzyme.mount(<EventAddOrEdit isActive={true} onModalOpen={onModalOpen} onModalClose={onModalClose}/>)
+    const wrapper = enzyme.mount(<EventDialog isActive={true} onModalOpen={onModalOpen} onModalClose={onModalClose}/>)
 })
 
 it('should has Title, Description, Date Field', function () {
-    const wrapper = enzyme.mount(<EventAddOrEdit/>)
+    const wrapper = enzyme.mount(<EventDialog/>)
 
     const state = {
         title: 'title',
@@ -74,11 +74,27 @@ it('should check props', function () {
         description: 'description'
     }
 
-    const wrapper = enzyme.shallow(<EventAddOrEdit {...props}/>)
+    const wrapper = enzyme.shallow(<EventDialog {...props}/>)
 
     expect(wrapper.state('title')).toBe(props.title)
     expect(wrapper.state('date')).toBe(props.date)
     expect(wrapper.state('description')).toBe(props.description)
 
     expect(wrapper.find('.dialog-title').text()).toBe(props.dialogTitle)
+})
+
+it('should check onAccept function', function () {
+    const props = {
+        title: 'title',
+        date: '05/28/2019',
+        description: 'description'
+    }
+
+    const onAccept = (data) => {
+        expect(data).toEqual(props)
+    }
+
+    const wrapper = enzyme.shallow(<EventDialog {...props} onAccept={onAccept}/>)
+
+    wrapper.find('.modal-footer .btn-primary').simulate('click')
 })

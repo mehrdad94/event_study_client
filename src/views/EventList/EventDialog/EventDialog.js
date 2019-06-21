@@ -14,7 +14,7 @@ const genState = props => {
     }
 }
 
-export class EventAddOrEdit extends React.Component {
+export class EventDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = genState(props)
@@ -28,24 +28,34 @@ export class EventAddOrEdit extends React.Component {
         jqueryModalRef.modal('hide')
     }
 
+    handleChange (type, event) {
+        this.setState({ [type]: event.target.value})
+    }
+
+    onAccept = () => {
+        EventDialog.hideModal()
+        this.props.onAccept(this.state)
+    }
+
     componentDidMount (){
         jqueryModalRef = $(this.refs.modal)
 
         jqueryModalRef.on('hidden.bs.modal', e => {
-            // this.clearState()
             this.props.onModalClose(e)
         })
 
         jqueryModalRef.on('shown.bs.modal', e => { this.props.onModalOpen(e) })
 
-        if (this.props.isActive) EventAddOrEdit.showModal()
+        if (this.props.isActive) EventDialog.showModal()
 
-        $('.event-date').datepicker()
+        $('.event-date').datepicker().on('changeDate', e => {
+            this.handleChange('date', e)
+        })
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.isActive !== prevProps.isActive) {
-            this.props.isActive ? EventAddOrEdit.showModal() : EventAddOrEdit.hideModal()
+            this.props.isActive ? EventDialog.showModal() : EventDialog.hideModal()
         }
 
         // check for changing state
@@ -60,14 +70,10 @@ export class EventAddOrEdit extends React.Component {
         }
     }
 
-    handleChange (type, event) {
-        this.setState({ [type]: event.target.value})
-    }
-
     render() {
         return (
             <div className="modal fade" ref='modal'>
-                <div className="modal-dialog" role="document">
+                <div className="modal-dialog" id="event-dialog-modal" role="document">
                     <div className="modal-content">
                         <div className="bd p-15">
                             <h5 className="m-0 dialog-title">{this.props.dialogTitle}</h5>
@@ -108,10 +114,11 @@ export class EventAddOrEdit extends React.Component {
                                               value={this.state.description}
                                               onChange={e => this.handleChange('description', e)}/>
                                 </div>
-                                <div className="text-right">
-                                    <button className="btn btn-primary cur-p" data-dismiss="modal">Done</button>
-                                </div>
                             </form>
+                        </div>
+                        <div className="text-right modal-footer">
+                            <button type="button" className="btn" data-dismiss="modal">Close</button>
+                            <button className="btn btn-primary cur-p" onClick={this.onAccept}>Done</button>
                         </div>
                     </div>
                 </div>
@@ -120,20 +127,22 @@ export class EventAddOrEdit extends React.Component {
     }
 }
 
-EventAddOrEdit.propTypes = {
+EventDialog.propTypes = {
     isActive: PropTypes.bool,
     onModalClose: PropTypes.func,
     onModalOpen: PropTypes.func,
+    onAccept: PropTypes.func,
     dialogTitle: PropTypes.string,
     title: PropTypes.string,
     date: PropTypes.string,
     description: PropTypes.string
 }
 
-EventAddOrEdit.defaultProps = {
+EventDialog.defaultProps = {
     isActive: false,
     onModalClose: () => {},
     onModalOpen: () => {},
+    onAccept: () => {},
     dialogTitle: '',
     title: '',
     date: '',

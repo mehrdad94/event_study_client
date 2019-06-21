@@ -13,6 +13,11 @@ export class ConfirmModal extends React.Component {
         jqueryModalRef.modal('hide')
     }
 
+    onAccept = () => {
+        ConfirmModal.hideModal()
+        this.props.onAccept()
+    }
+
     componentDidMount () {
         jqueryModalRef = $(this.refs.modal)
 
@@ -33,7 +38,7 @@ export class ConfirmModal extends React.Component {
         const { question } = this.props
         return (
             <div className="modal fade" ref='modal'>
-                <div className="modal-dialog" role="document">
+                <div className="modal-dialog confirm-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-body">
                             <form>
@@ -42,7 +47,7 @@ export class ConfirmModal extends React.Component {
                                 </div>
                                 <div className="text-right">
                                     <button className="btn cur-p m-5" data-dismiss="modal">No</button>
-                                    <button className="btn btn-primary cur-p m-5" data-dismiss="modal">Yes</button>
+                                    <button className="btn btn-primary cur-p m-5" onClick={this.onAccept}>Yes</button>
                                 </div>
                             </form>
                         </div>
@@ -57,12 +62,14 @@ ConfirmModal.propTypes = {
     isActive: PropTypes.bool,
     question: PropTypes.string,
     onModalClose: PropTypes.func,
-    onModalOpen: PropTypes.func
+    onModalOpen: PropTypes.func,
+    onAccept: PropTypes.func,
 }
 
 ConfirmModal.defaultProps = {
     isActive: false,
     question: '',
     onModalClose: () => {},
-    onModalOpen: () => {}
+    onModalOpen: () => {},
+    onAccept: () => {}
 }

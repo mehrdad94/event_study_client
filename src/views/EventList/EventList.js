@@ -1,39 +1,48 @@
 import React, { Fragment } from 'react'
-import PropTypes from 'prop-types'
 import { EventItem } from './EventItem/EventItem'
-import { EventAddOrEdit } from './EventAddOrEdit/EventAddOrEdit'
+import { EventDialog } from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
+import './EventList.scss'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
 const addEventDialogTitle = 'Add Event'
 const editEventDialogTitle = 'Edit Event'
+
+let eventDialogPhase = 'add' // add or edit
+let eventKey
+
 export class EventList extends React.Component {
     state = {
         eventDialogTitle: '',
         eventDialogProps: {},
         isEventDialogActive: false,
-        isConfirmDialogActive: false
+        isConfirmDialogActive: false,
+        eventList: []
     }
 
-    onDeleteClick = () => {
+    onDeleteClick = (index) => {
+        eventKey = index
         this.setState({
             isConfirmDialogActive: true
         })
     }
 
     onEditClick = (index) => {
+        eventDialogPhase = 'edit'
+        eventKey = index
         this.setState({
             isEventDialogActive: true,
             eventDialogTitle: editEventDialogTitle,
-            eventDialogProps: this.props.items[index]
+            eventDialogProps: this.state.eventList[index]
         })
     }
 
     renderEvents = () => {
-        return this.props.items.map((item, index) => <EventItem onDeleteClick={this.onDeleteClick} onEditClick={() => this.onEditClick(index)} key={index} {...item}/>)
+        return this.state.eventList.map((item, index) => <EventItem onDeleteClick={() => this.onDeleteClick(index)} onEditClick={() => this.onEditClick(index)} key={index} {...item}/>)
     }
 
     onPlusClick = () => {
+        eventDialogPhase = 'add'
         this.setState({
             isEventDialogActive: true,
             eventDialogTitle: addEventDialogTitle,
@@ -57,6 +66,33 @@ export class EventList extends React.Component {
         })
     }
 
+    onEventDialogAccept = data => {
+        if (eventDialogPhase === 'add') {
+            this.setState({
+                eventList: [
+                    ...this.state.eventList,
+                    data
+                ]
+            })
+        } else {
+            const newList = [...this.state.eventList]
+            newList[eventKey] = Object.assign({}, newList[eventKey], data)
+            this.setState({
+                eventList: newList
+            })
+        }
+    }
+
+    onDeleteEventAccept = () => {
+        let newList = [...this.state.eventList]
+
+        newList.splice(eventKey, 1)
+
+        this.setState({
+            eventList: newList
+        })
+    }
+
     render() {
         return (
             <Fragment>
@@ -68,36 +104,30 @@ export class EventList extends React.Component {
                     <div className="pos-r">
                         <button type="button"
                                 onClick={this.onPlusClick}
-                                className="mT-nv-50 pos-a r-10 t-2 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning">
+                                className="mT-nv-50 pos-a r-10 t-2 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning event-dialog-btn">
                             <i className="ti-plus"/>
                         </button>
 
-                        <ul className="m-0 p-0 mT-20 eventItems">
+                        <ul className="m-0 p-0 mT-20" id="event-items">
                             { this.renderEvents() }
                         </ul>
                     </div>
                 </div>
 
                 {/* Add and Edit Dialog */}
-                <EventAddOrEdit isActive={this.state.isEventDialogActive}
-                                dialogTitle={this.state.eventDialogTitle}
-                                onModalClose={this.onEventAddModalClose}
-                                {...this.state.eventDialogProps}/>
+                <EventDialog isActive={this.state.isEventDialogActive}
+                             dialogTitle={this.state.eventDialogTitle}
+                             onModalClose={this.onEventAddModalClose}
+                             onAccept={this.onEventDialogAccept}
+                             {...this.state.eventDialogProps}/>
 
 
                 {/* Delete Confirm Dialog*/}
                 <ConfirmModal isActive={this.state.isConfirmDialogActive}
                               onModalClose={this.onConfirmModalClose}
+                              onAccept={this.onDeleteEventAccept}
                               question={deleteConfirmModalQuestion}/>
             </Fragment>
         )
     }
-}
-
-EventList.propTypes = {
-    items: PropTypes.array
-}
-
-EventList.defaultProps = {
-    items: []
 }

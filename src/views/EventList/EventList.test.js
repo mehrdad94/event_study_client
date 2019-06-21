@@ -5,35 +5,15 @@ import 'bootstrap'
 import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'
 
 it('should check rendered elements', () => {
-    const props = {
-        items: [
-            {
-                title: 'title',
-                date: 'date',
-                description: 'description'
-            }
-        ]
-    }
+    const wrapper = enzyme.shallow(<EventList/>)
 
-    const wrapper = enzyme.shallow(<EventList {...props}/>)
-
-    const itemsComponent = wrapper.find('.eventItems')
+    const itemsComponent = wrapper.find('#event-items')
 
     expect(itemsComponent.children().length).toBe(1)
 })
 
 it('should show confirm dialog when user clicks on delete button', function () {
-    const props = {
-        items: [
-            {
-                title: 'title',
-                date: 'date',
-                description: 'description'
-            }
-        ]
-    }
-
-    const wrapper = enzyme.mount(<EventList {...props}/>)
+    const wrapper = enzyme.mount(<EventList/>)
 
     const deleteButton = wrapper.find('.delete-icon-btn')
 
@@ -43,22 +23,12 @@ it('should show confirm dialog when user clicks on delete button', function () {
     expect(wrapper.find('.question').text().length > 1).toBe(true)
 })
 
-it('should show edit dialog when user clicks on edit button', function () {
-    const props = {
-        items: [
-            {
-                title: 'title',
-                date: 'date',
-                description: 'description'
-            }
-        ]
-    }
+it('should add an item to list of items', function () {
+    const wrapper = enzyme.mount(<EventList/>)
 
-    const wrapper = enzyme.mount(<EventList {...props}/>)
+    const eventDialogButton = wrapper.find('.event-dialog-btn')
 
-    const editButton = wrapper.find('.edit-icon-btn')
-
-    editButton.simulate('click')
+    eventDialogButton.simulate('click')
 
     const findElement = elm => wrapper.find(elm)
 
@@ -66,7 +36,91 @@ it('should show edit dialog when user clicks on edit button', function () {
     const dateField = () => findElement('#eventAddDate')
     const descriptionField = () => findElement('#eventAddDescription')
 
-    expect(titleField().props().value).toBe(props.items[0].title)
-    expect(dateField().props().value).toBe(props.items[0].date)
-    expect(descriptionField().props().value).toBe(props.items[0].description)
+    const titleValue = 'title'
+    const dateValue = 'dateValue'
+    const descriptionValue = 'descriptionValue'
+
+    titleField().simulate('change', { target: { value: titleValue} })
+    dateField().simulate('change', { target: { value: dateValue } })
+    descriptionField().simulate('change', { target: { value: descriptionValue } })
+
+    const acceptButton = () => findElement('#event-dialog-modal .modal-footer .btn-primary')
+
+    acceptButton().simulate('click')
+
+    const eventItems = () => findElement('#event-items')
+
+
+    expect(eventItems().find('.eventItemTitle').text()).toBe(titleValue)
+    expect(eventItems().find('.eventItemDate').text()).toBe(dateValue + ' - ')
+    expect(eventItems().find('.eventItemDescription').text()).toBe(descriptionValue)
+})
+
+it('should delete an event', function () {
+    const title = 'title'
+    const date = 'dateValue'
+    const description = 'descriptionValue'
+
+    const items = [{
+        title,
+        date,
+        description
+    }]
+
+    const wrapper = enzyme.mount(<EventList/>)
+
+    wrapper.setState({
+        eventList: items
+    })
+
+
+    const findElement = elm => wrapper.find(elm)
+
+    const eventItems = () => findElement('#event-items')
+
+    expect(eventItems().find('.eventItemTitle').text()).toBe(items[0].title)
+    expect(eventItems().find('.eventItemDate').text()).toBe(items[0].date + ' - ')
+    expect(eventItems().find('.eventItemDescription').text()).toBe(items[0].description)
+
+
+    eventItems().find('.delete-icon-btn').simulate('click')
+
+    wrapper.find('.confirm-dialog .btn-primary').simulate('click')
+
+    expect(eventItems().children().length).toBe(0)
+})
+
+it('should edit an event', function () {
+    const title = 'title'
+    const newTitle = 'newTitle'
+    const date = 'dateValue'
+    const description = 'descriptionValue'
+
+    const items = [{
+        title,
+        date,
+        description
+    }]
+
+    const wrapper = enzyme.mount(<EventList/>)
+
+    wrapper.setState({
+        eventList: items
+    })
+
+    const findElement = elm => wrapper.find(elm)
+
+    const eventItems = () => findElement('#event-items')
+
+    eventItems().find('.edit-icon-btn').simulate('click')
+
+    const titleField = () => findElement('#eventAddTitle')
+
+    titleField().simulate('change', { target: { value: newTitle} })
+
+    const acceptButton = () => findElement('#event-dialog-modal .modal-footer .btn-primary')
+
+    acceptButton().simulate('click')
+
+    expect(eventItems().find('.eventItemTitle').text()).toBe(newTitle)
 })
