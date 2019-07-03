@@ -3,41 +3,86 @@ import stocks from './stocks'
 import {
     CREATE_STOCK,
     UPDATE_STOCK,
-    DELETE_STOCK
+    DELETE_STOCK,
+    SELECT_STOCK
 } from '../ActionTypes'
 
-it('should handle initial state', () => {
-    const initialState = undefined
-    const action = {}
-    const result = []
+describe("Stocks reducer", function () {
+    let initialState
 
-    expect(stocks(initialState, action)).toEqual(result)
-})
+    beforeEach(() => {
+        initialState = {
+            stockList: [],
+            activeStock: ''
+        }
+    })
 
-it('should add a stock', function () {
-    const initialState = []
-    const stock = { key: '1', name: 'name' }
-    const action = { type: CREATE_STOCK, stock }
-    const result = [stock]
+    it('should handle initial state', () => {
+        const action = {}
 
-    expect(stocks(initialState, action)).toEqual(result)
-})
+        const result = {
+            stockList: [],
+            activeStock: ''
+        }
 
-it('should update a stock', function () {
-    const oldStock = { key: '1', name: 'name' }
-    const newStock = { key: '1', name: 'new name' }
-    const initialState = [oldStock]
-    const action = { type: UPDATE_STOCK, stock: { key: '1', payload: newStock } }
-    const result = [newStock]
+        expect(stocks(undefined, action)).toEqual(result)
+    })
 
-    expect(stocks(initialState, action)).toEqual(result)
-})
+    it('should add a stock', function () {
+        const stock = { key: '1', name: 'name' }
+        const action = { type: CREATE_STOCK, stock }
 
-it('should delete a stock', function () {
-    const stock = { key: '1', name: 'name' }
-    const initialState = [stock]
-    const action = { type: DELETE_STOCK, key: stock.key }
-    const result = []
+        const result = {
+            stockList: [stock],
+            activeStock: ''
+        }
 
-    expect(stocks(initialState, action)).toEqual(result)
+        expect(stocks(initialState, action)).toEqual(result)
+    })
+
+    it('should update a stock', function () {
+        const oldStock = { key: '1', name: 'name' }
+        const newStock = { key: '1', name: 'new name' }
+
+        initialState.stockList.push(oldStock)
+
+        const action = { type: UPDATE_STOCK, stock: newStock }
+
+        const result = {
+            stockList: [newStock],
+            activeStock: ''
+        }
+
+        expect(stocks(initialState, action)).toEqual(result)
+    })
+
+    it('should delete a stock', function () {
+        const stock = { key: '1', name: 'name' }
+
+        initialState.stockList.push(stock)
+
+        const action = { type: DELETE_STOCK, key: stock.key }
+
+        const result = {
+            stockList: [],
+            activeStock: ''
+        }
+
+        expect(stocks(initialState, action)).toEqual(result)
+    })
+
+    it('should select an Item', function () {
+        const stock = { key: '1', name: 'name' }
+
+        initialState.stockList.push(stock)
+
+        const action = { type: SELECT_STOCK, stock }
+
+        const result = {
+            stockList: [stock],
+            activeStock: stock
+        }
+
+        expect(stocks(initialState, action)).toEqual(result)
+    });
 })

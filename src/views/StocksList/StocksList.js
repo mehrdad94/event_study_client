@@ -1,7 +1,7 @@
 import React from 'react'
 import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
-import { createStock, deleteStock } from '../../redux/actions/index'
+import { createStock, deleteStock, selectStock } from '../../redux/actions/index'
 import { Item } from '../../components/Item/Item'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import './StocksList.scss'
@@ -54,7 +54,12 @@ export class StocksList extends React.Component {
     }
 
     renderStocksList = () => {
-        return this.props.stocks.map(stock => <Item {...stock} onDeleteClick={() => this.onDeleteClick(stock.key)} key={stock.key}/>)
+        return this.props.stocks.map(stock => (
+          <Item {...stock}
+                onDeleteClick={() => this.onDeleteClick(stock.key)}
+                onItemClick={() => this.props.selectStock(stock)}
+                key={stock.key}/>
+        ))
     }
 
     render () {
@@ -93,13 +98,14 @@ export class StocksList extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        stocks: state.stocks
+        stocks: state.stocks.stockList
     }
 }
 
 const actionCreators = {
     createStock,
-    deleteStock
+    deleteStock,
+    selectStock
 }
 
 export default connect(mapStateToProps, actionCreators)(StocksList);

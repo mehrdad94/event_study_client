@@ -12,6 +12,7 @@ import {
     CREATE_STOCK,
     UPDATE_STOCK,
     DELETE_STOCK,
+    SELECT_STOCK,
     SET_STATS
 } from '../ActionTypes'
 
@@ -91,6 +92,12 @@ export const deleteStock = key => {
     return {
         type: DELETE_STOCK,
         key
+    }
+}
+export const selectStock = stock => {
+    return {
+        type: SELECT_STOCK,
+        stock
     }
 }
 export const setStats = stats => {

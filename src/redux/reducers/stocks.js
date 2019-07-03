@@ -1,26 +1,38 @@
 import {
     CREATE_STOCK,
     UPDATE_STOCK,
-    DELETE_STOCK
+    DELETE_STOCK, SELECT_STOCK
 } from '../ActionTypes'
 
-export default function stocks (state = [], action) {
+const defaultState = {
+    stockList: [],
+    activeStock: {}
+}
+
+export default function stocks (state = defaultState, action) {
     switch (action.type) {
         case CREATE_STOCK:
-            return [
-                action.stock,
-                ...state
-            ]
+            return {
+                ...state,
+                stockList: [action.stock, ...state.stockList],
+                stocksKeyValue: { [action.stock.key]: action.stock, ...state.stocksKeyValue }
+            }
         case UPDATE_STOCK:
-            return state.map(stock => {
-                if (stock.key !== action.stock.key) return stock
-                else return {
-                    ...stock,
-                    ...action.stock.payload
-                }
-            })
+            return {
+                ...state,
+                stockList: state.stockList.map(stock => stock.key === action.stock.key ? {...stock, ...action.stock} : stock)
+            }
         case DELETE_STOCK:
-            return state.filter(stock => stock.key !== action.key)
+            return {
+                ...state,
+                stockList: state.stockList.filter(stock => stock.key !== action.key),
+                activeStock: state.activeStock.key === action.key ? {} : state.activeStock
+            }
+        case SELECT_STOCK:
+            return {
+                ...state,
+                activeStock: action.stock
+            }
         default:
             return state
     }

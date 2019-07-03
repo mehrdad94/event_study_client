@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { LineChart } from '../../components/LineChart/LineChart'
 
 const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
@@ -53,3 +54,12 @@ export class Chart extends React.Component {
         )
     }
 }
+
+
+const mapStateToProps = state => {
+    return {
+        stats: state.stats
+    }
+}
+
+export default connect(mapStateToProps)(Chart)

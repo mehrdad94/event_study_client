@@ -15,5 +15,6 @@ export const DELETE_EVENT = 'DELETE_EVENT'
 export const CREATE_STOCK = 'CREATE_STOCK'
 export const UPDATE_STOCK = 'UPDATE_STOCK'
 export const DELETE_STOCK = 'DELETE_STOCK'
+export const SELECT_STOCK = 'SELECT_STOCK'
 
 export const SET_STATS = 'SET_STATS'

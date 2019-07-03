@@ -12,6 +12,7 @@ import {
     CREATE_STOCK,
     UPDATE_STOCK,
     DELETE_STOCK,
+    SELECT_STOCK,
     SET_STATS
 } from '../ActionTypes'
 
@@ -29,6 +30,7 @@ import {
     createStock,
     updateStock,
     deleteStock,
+    selectStock,
     setStats
 } from './index'
 
@@ -188,6 +190,20 @@ it('should create an action to delete a stock', function () {
     }
 
     expect(deleteStock(key)).toEqual(result)
+})
+
+it('should select a stock', function () {
+    const stock = {
+        key: 'something',
+        name: 'another'
+    }
+
+    const result = {
+        type: SELECT_STOCK,
+        stock
+    }
+
+    expect(selectStock(stock)).toEqual(result)
 })
 
 it('should create an action to set statistical', function () {

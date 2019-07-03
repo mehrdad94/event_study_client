@@ -3,12 +3,9 @@ import { Item } from './Item'
 import enzyme from '../../lib/enzyme'
 
 it('should test props', function () {
-    let deleteClicked = false
-
     const props = {
-        onDeleteClick () {
-            deleteClicked = true
-        },
+        onDeleteClick: jest.fn(),
+        onItemClick: jest.fn(),
         title: 'title',
         description: 'description',
         descriptionColor: 'success'
@@ -24,8 +21,11 @@ it('should test props', function () {
     expect(descriptionComponent.hasClass('c-green-500')).toBe(true)
 
     const deleteButton = wrapper.find('.item-delete-btn')
+    const item = wrapper.find('.item')
 
     deleteButton.simulate('click')
+    item.simulate('click')
 
-    expect(deleteClicked).toBe(true)
+    expect(props.onDeleteClick).toHaveBeenCalled()
+    expect(props.onItemClick).toHaveBeenCalled()
 })
