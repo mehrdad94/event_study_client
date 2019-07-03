@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { setPrices } from '../../redux/actions/index'
 import { csvToJson } from '../../lib/csv'
 import { PriceTable } from '../../components/PriceTable/PriceTable'
 import PerfectScrollbar from 'perfect-scrollbar'
@@ -7,10 +9,6 @@ import './PriceList.scss'
 let fileInput
 
 export class PriceList extends React.Component {
-    state = {
-        prices: []
-    }
-
     onFileChange = e => {
         const file = e.target.files[0]
 
@@ -18,9 +16,7 @@ export class PriceList extends React.Component {
 
         csvToJson(file)
             .then(json => {
-                this.setState({
-                    prices: json
-                })
+                this.props.setPrices(json)
             })
     }
 
@@ -29,7 +25,7 @@ export class PriceList extends React.Component {
     }
 
     getPriceHeaders = () => {
-        const firstPrice = this.state.prices[0]
+        const firstPrice = this.props.prices[0]
 
         if (firstPrice) return Object.keys(firstPrice)
         else return []
@@ -61,10 +57,22 @@ export class PriceList extends React.Component {
                     </button>
 
                     <div className="p-20 pos-r" ref="scrollable" id="price-list-price-table">
-                        <PriceTable headers={this.getPriceHeaders()} rows={this.state.prices}/>
+                        <PriceTable headers={this.getPriceHeaders()} rows={this.props.prices}/>
                     </div>
                 </div>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        prices: state.prices
+    }
+}
+
+const actionCreators = {
+    setPrices
+}
+
+export default connect(mapStateToProps, actionCreators)(PriceList)

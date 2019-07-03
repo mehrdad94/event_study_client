@@ -3,15 +3,15 @@ import { PriceList } from './PriceList'
 import enzyme from '../../lib/enzyme'
 
 it('should load a csv file', function (done) {
-    const wrapper = enzyme.mount(<PriceList/>)
+    const props = {
+        prices: [],
+        setPrices: jest.fn()
+    }
+
+    const wrapper = enzyme.mount(<PriceList {...props} />)
 
     const csv = 'FIRST NAME ,LAST NAME\nFrank,Riley'
-    const json = [
-        {
-            "FIRST NAME": "Frank",
-            "LAST NAME": "Riley"
-        }
-    ]
+
     const file = new Blob([csv], {type : 'text/plain'})
     const readerResult = {
         target: {
@@ -31,7 +31,7 @@ it('should load a csv file', function (done) {
     wrapper.find('#price-list-file-input').simulate('change', {target: {files: [file]}})
 
     setTimeout(() => {
-        expect(wrapper.state('prices')).toEqual(json)
+        expect(props.setPrices).toHaveBeenCalled()
         done()
     }, 100)
 })
