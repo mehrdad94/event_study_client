@@ -1,4 +1,7 @@
 import React, { Fragment } from 'react'
+import uuid from 'uuid/v4'
+import { connect } from 'react-redux'
+import { createEvent, updateEvent, deleteEvent } from '../../redux/actions'
 import { EventItem } from './EventItem/EventItem'
 import { EventDialog } from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
@@ -9,7 +12,7 @@ const addEventDialogTitle = 'Add Event'
 const editEventDialogTitle = 'Edit Event'
 
 let eventDialogPhase = 'add' // add or edit
-let eventKey
+let eventToModify
 
 export class EventList extends React.Component {
     state = {
@@ -20,25 +23,30 @@ export class EventList extends React.Component {
         eventList: []
     }
 
-    onDeleteClick = (index) => {
-        eventKey = index
+    onDeleteClick = event => {
+        eventToModify = event
         this.setState({
             isConfirmDialogActive: true
         })
     }
 
-    onEditClick = (index) => {
+    onEditClick = event => {
         eventDialogPhase = 'edit'
-        eventKey = index
+        eventToModify = event
         this.setState({
             isEventDialogActive: true,
             eventDialogTitle: editEventDialogTitle,
-            eventDialogProps: this.state.eventList[index]
+            eventDialogProps: event
         })
     }
 
     renderEvents = () => {
-        return this.state.eventList.map((item, index) => <EventItem onDeleteClick={() => this.onDeleteClick(index)} onEditClick={() => this.onEditClick(index)} key={index} {...item}/>)
+        return this.props.eventList.map(item => (
+          <EventItem onDeleteClick={() => this.onDeleteClick(item)}
+                     onEditClick={() => this.onEditClick(item)}
+                     key={item.key}
+                     {...item}/>)
+        )
     }
 
     onPlusClick = () => {
@@ -68,29 +76,16 @@ export class EventList extends React.Component {
 
     onEventDialogAccept = data => {
         if (eventDialogPhase === 'add') {
-            this.setState({
-                eventList: [
-                    ...this.state.eventList,
-                    data
-                ]
-            })
+            data.key = uuid()
+            this.props.createEvent(data)
         } else {
-            const newList = [...this.state.eventList]
-            newList[eventKey] = Object.assign({}, newList[eventKey], data)
-            this.setState({
-                eventList: newList
-            })
+            data.key = eventToModify.key
+            this.props.updateEvent(data)
         }
     }
 
     onDeleteEventAccept = () => {
-        let newList = [...this.state.eventList]
-
-        newList.splice(eventKey, 1)
-
-        this.setState({
-            eventList: newList
-        })
+        this.props.deleteEvent(eventToModify.key)
     }
 
     render() {
@@ -108,6 +103,7 @@ export class EventList extends React.Component {
                             <i className="ti-plus"/>
                         </button>
 
+                        {/* Event List */}
                         <ul className="m-0 p-0 mT-20" id="event-items">
                             { this.renderEvents() }
                         </ul>
@@ -131,3 +127,17 @@ export class EventList extends React.Component {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        eventList: state.events
+    }
+}
+
+const actionCreators = {
+    createEvent,
+    updateEvent,
+    deleteEvent
+}
+
+export default connect(mapStateToProps, actionCreators)(EventList)

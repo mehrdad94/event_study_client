@@ -16,7 +16,7 @@ export default function events (state = [], action) {
                 if (event.key !== action.event.key) return event
                 else return {
                     ...event,
-                    ...action.event.payload
+                    ...action.event
                 }
             })
         case DELETE_EVENT:

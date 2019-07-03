@@ -2,35 +2,33 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import $ from 'jquery'
 
-let jqueryModalRef
-
 export class ConfirmModal extends React.Component {
-    static showModal () {
-        jqueryModalRef.modal('show')
+    showModal = () => {
+        this.refs.modal.modal('show')
     }
 
-    static hideModal () {
-        jqueryModalRef.modal('hide')
+    hideModal = () => {
+        this.refs.modal.modal('hide')
     }
 
     onAccept = () => {
-        ConfirmModal.hideModal()
+        this.hideModal()
         this.props.onAccept()
     }
 
     componentDidMount () {
-        jqueryModalRef = $(this.refs.modal)
+        this.refs.modal = $(this.refs.modal)
 
-        jqueryModalRef.on('hidden.bs.modal', e => { this.props.onModalClose(e) })
+        this.refs.modal.on('hidden.bs.modal', e => { this.props.onModalClose(e) })
 
-        jqueryModalRef.on('shown.bs.modal', e => { this.props.onModalOpen(e) })
+        this.refs.modal.on('shown.bs.modal', e => { this.props.onModalOpen(e) })
 
-        if (this.props.isActive) ConfirmModal.showModal()
+        if (this.props.isActive) this.showModal()
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.isActive !== prevProps.isActive) {
-            this.props.isActive ? ConfirmModal.showModal() : ConfirmModal.hideModal()
+            this.props.isActive ? this.showModal() : this.hideModal()
         }
     }
 
@@ -41,7 +39,7 @@ export class ConfirmModal extends React.Component {
                 <div className="modal-dialog confirm-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-body">
-                            <form>
+                            <div>
                                 <div className="fw-600 question p-15">
                                     {question}
                                 </div>
@@ -49,7 +47,7 @@ export class ConfirmModal extends React.Component {
                                     <button className="btn cur-p m-5" data-dismiss="modal">No</button>
                                     <button className="btn btn-primary cur-p m-5" onClick={this.onAccept}>Yes</button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>

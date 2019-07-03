@@ -17,13 +17,6 @@ export class Item extends React.Component {
                 <div className="peers">
                     <div className="peer">
                         <a href="#"
-                           className="td-n c-deep-purple-500 cH-blue-500 fsz-md p-5 item-edit-btn"
-                           onClick={onEditClick}>
-                            <i className="ti-pencil"/>
-                        </a>
-                    </div>
-                    <div className="peer">
-                        <a href="#"
                            className="td-n c-red-500 cH-blue-500 fsz-md p-5 item-delete-btn"
                            onClick={onDeleteClick}>
                             <i className="ti-trash"/>

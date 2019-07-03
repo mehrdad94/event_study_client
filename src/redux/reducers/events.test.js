@@ -27,7 +27,7 @@ it('should update a event', function () {
     const oldEvent = { key: '1', name: 'name' }
     const newEvent = { key: '1', name: 'new name' }
     const initialState = [oldEvent]
-    const action = { type: UPDATE_EVENT, event: { key: '1', payload: newEvent } }
+    const action = { type: UPDATE_EVENT, event: newEvent }
     const result = [newEvent]
 
     expect(events(initialState, action)).toEqual(result)

@@ -1,6 +1,6 @@
 import React from 'react'
-import { StocksList } from './views/StocksList/StocksList'
-import { EventList } from './views/EventList/EventList'
+import StocksList from './views/StocksList/StocksList'
+import EventList from './views/EventList/EventList'
 import { PriceList} from './views/PriceList/PriceList'
 import { Chart } from './views/Chart/Chart'
 import './App.scss'
