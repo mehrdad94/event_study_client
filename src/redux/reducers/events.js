@@ -4,23 +4,29 @@ import {
     DELETE_EVENT
 } from '../ActionTypes'
 
-export default function events (state = [], action) {
+export default function events (state = {}, action) {
     switch (action.type) {
         case CREATE_EVENT:
-            return [
-                action.event,
-                ...state
-            ]
+            return {
+                ...state,
+                [action.payload.stockKey]: [action.payload.event, ...(state[action.payload.stockKey] || [])],
+            }
         case UPDATE_EVENT:
-            return state.map(event => {
-                if (event.key !== action.event.key) return event
-                else return {
-                    ...event,
-                    ...action.event
-                }
-            })
+            return {
+                ...state,
+                [action.payload.stockKey]: state[action.payload.stockKey].map(event => {
+                    if (event.key !== action.payload.event.key) return event
+                    else return {
+                        ...event,
+                        ...action.payload.event
+                    }
+                })
+            }
         case DELETE_EVENT:
-            return state.filter(event => event.key !== action.key)
+            return {
+                ...state,
+                [action.payload.stockKey]: state[action.payload.stockKey].filter(event => event.key !== action.payload.key)
+            }
         default:
             return state
     }

@@ -5,8 +5,23 @@ import { csvToJson } from '../../lib/csv'
 import { PriceTable } from '../../components/PriceTable/PriceTable'
 import PerfectScrollbar from 'perfect-scrollbar'
 import './PriceList.scss'
+import {Unavailable} from '../../components/Unavailable/Unavailable'
+
+const IMPORT_PRICES = "Import Prices"
+const IMPORT_PRICES_DESCRIPTION = "You need to import stock prices from JSON or CSV file."
+
+const unavailableProps = {
+    title: IMPORT_PRICES,
+    description: IMPORT_PRICES_DESCRIPTION,
+    isActive: true
+}
 
 export class PriceList extends React.Component {
+    renderUnavailableComponent = () => {
+        if (!this.props.prices || !this.props.prices.length) return <Unavailable {...unavailableProps}/>
+        else return null
+    }
+
     onFileChange = e => {
         const file = e.target.files[0]
 
@@ -37,12 +52,15 @@ export class PriceList extends React.Component {
 
     render () {
         return (
-            <div className="bdrs-3 ov-h bgc-white bd">
+            <div className="bdrs-3 ov-h bgc-white h-100p bd">
                 <div className="bgc-deep-purple-500 ta-c p-30">
                     <h1 className="fw-300 mB-5 lh-1 c-white">01<span className="fsz-def">st</span></h1>
                     <h3 className="c-white">Price List</h3>
                 </div>
-                <div className="m-0 p-0 mT-20 pos-r">
+                <div className="m-0 p-0 pos-r price-list-price-table-wrap">
+                    {
+                        this.renderUnavailableComponent()
+                    }
                     <input type="file"
                            ref="fileInput"
                            id="price-list-file-input"
@@ -51,7 +69,7 @@ export class PriceList extends React.Component {
                            onChange={this.onFileChange}/>
 
                     <button type="button"
-                            className="mT-nv-50 pos-a r-10 t-2 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning"
+                            className="mT-nv-50 pos-a r-10 zi-2 t-25 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning"
                             onClick={this.onAddClick}>
                         <i className="ti-plus"/>
                     </button>

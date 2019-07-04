@@ -12,7 +12,6 @@
 // ---------------------------------------------------------
 
 .page-container {
-  min-height: 100vh;
   padding-left: $offscreen-size;
   transition: all 0.2s ease;
 
@@ -31,7 +30,7 @@
 
 .main-content {
   padding: 85px 20px 20px;
-  min-height: calc(100vh - 61px);
+  height: calc(100% - 61px);
 
   @include to($breakpoint-md) {
     padding: 85px 5px 5px;

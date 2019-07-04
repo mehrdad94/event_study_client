@@ -1,3 +1,6 @@
 #price-list-price-table {
-  max-height: 432px;
+  max-height: 100%;
+}
+.price-list-price-table-wrap {
+  height: calc(100% - 144px);
 }

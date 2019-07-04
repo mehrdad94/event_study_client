@@ -1,3 +1,6 @@
 #event-items {
-  max-height: 432px;
+  height: 100%
+}
+.event-items-wrap {
+  height: calc(100% - 144px);
 }

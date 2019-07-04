@@ -64,7 +64,7 @@ export class StocksList extends React.Component {
 
     render () {
         return (
-            <div className="peer stocks-list">
+            <div className="peer stocks-list h-100p">
                 <div className="layers h-100">
                     <div className="bdB layer w-100 pos-r">
                         <input type="text"

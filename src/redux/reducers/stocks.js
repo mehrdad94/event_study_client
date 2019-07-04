@@ -14,8 +14,7 @@ export default function stocks (state = defaultState, action) {
         case CREATE_STOCK:
             return {
                 ...state,
-                stockList: [action.stock, ...state.stockList],
-                stocksKeyValue: { [action.stock.key]: action.stock, ...state.stocksKeyValue }
+                stockList: [action.stock, ...state.stockList]
             }
         case UPDATE_STOCK:
             return {

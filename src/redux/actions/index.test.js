@@ -119,40 +119,48 @@ it('should create an action to create an event', function () {
     const event = {
         name: 'something'
     }
-
+    const stockKey = '123'
     const result = {
         type: CREATE_EVENT,
-        event
+        payload: {
+            stockKey,
+            event
+        }
     }
 
-    expect(createEvent(event)).toEqual(result)
+    expect(createEvent(event, stockKey)).toEqual(result)
 })
 
 it('should create an action to edit an event', function () {
     const event = {
-        key: 'event key',
-        payload: {
+            key: 'event key',
             name: 'another name'
+    }
+
+    const stockKey = '123'
+    const result = {
+        type: UPDATE_EVENT,
+        payload: {
+            event,
+            stockKey
         }
     }
 
-    const result = {
-        type: UPDATE_EVENT,
-        event
-    }
-
-    expect(updateEvent(event)).toEqual(result)
+    expect(updateEvent(event, stockKey)).toEqual(result)
 })
 
 it('should create an action to delete an event', function () {
     const key = 'event key to delete'
-
+    const stockKey = '123'
     const result = {
         type: DELETE_EVENT,
-        key
+        payload: {
+            key,
+            stockKey
+        }
     }
 
-    expect(deleteEvent(key)).toEqual(result)
+    expect(deleteEvent(key, stockKey)).toEqual(result)
 })
 
 

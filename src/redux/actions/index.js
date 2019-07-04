@@ -61,22 +61,31 @@ export const setPrices = (prices, stockKey) => {
         }
     }
 }
-export const createEvent = event => {
+export const createEvent = (event, stockKey) => {
     return {
         type: CREATE_EVENT,
-        event
+        payload: {
+            event,
+            stockKey
+        }
     }
 }
-export const updateEvent = event => {
+export const updateEvent = (event, stockKey) => {
     return {
         type: UPDATE_EVENT,
-        event
+        payload: {
+            event,
+            stockKey
+        }
     }
 }
-export const deleteEvent = key => {
+export const deleteEvent = (key, stockKey) => {
     return {
         type: DELETE_EVENT,
-        key
+        payload: {
+            key,
+            stockKey
+        }
     }
 }
 export const createStock = stock => {

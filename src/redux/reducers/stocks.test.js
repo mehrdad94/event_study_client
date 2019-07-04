@@ -13,7 +13,7 @@ describe("Stocks reducer", function () {
     beforeEach(() => {
         initialState = {
             stockList: [],
-            activeStock: ''
+            activeStock: {}
         }
     })
 
@@ -22,7 +22,7 @@ describe("Stocks reducer", function () {
 
         const result = {
             stockList: [],
-            activeStock: ''
+            activeStock: {}
         }
 
         expect(stocks(undefined, action)).toEqual(result)
@@ -34,7 +34,7 @@ describe("Stocks reducer", function () {
 
         const result = {
             stockList: [stock],
-            activeStock: ''
+            activeStock: {}
         }
 
         expect(stocks(initialState, action)).toEqual(result)
@@ -50,7 +50,7 @@ describe("Stocks reducer", function () {
 
         const result = {
             stockList: [newStock],
-            activeStock: ''
+            activeStock: {}
         }
 
         expect(stocks(initialState, action)).toEqual(result)
@@ -65,7 +65,7 @@ describe("Stocks reducer", function () {
 
         const result = {
             stockList: [],
-            activeStock: ''
+            activeStock: {}
         }
 
         expect(stocks(initialState, action)).toEqual(result)
