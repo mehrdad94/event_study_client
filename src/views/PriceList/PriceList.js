@@ -6,8 +6,6 @@ import { PriceTable } from '../../components/PriceTable/PriceTable'
 import PerfectScrollbar from 'perfect-scrollbar'
 import './PriceList.scss'
 
-let fileInput
-
 export class PriceList extends React.Component {
     onFileChange = e => {
         const file = e.target.files[0]
@@ -16,15 +14,17 @@ export class PriceList extends React.Component {
 
         csvToJson(file)
             .then(json => {
-                this.props.setPrices(json)
+                this.props.setPrices(json, this.props.stockKey)
             })
     }
 
     onAddClick = () => {
-        fileInput.click()
+        this.refs.fileInput.click()
     }
 
     getPriceHeaders = () => {
+        if (!this.props.prices) return []
+
         const firstPrice = this.props.prices[0]
 
         if (firstPrice) return Object.keys(firstPrice)
@@ -32,7 +32,6 @@ export class PriceList extends React.Component {
     }
 
     componentDidMount() {
-        fileInput = document.getElementById('price-list-file-input')
         new PerfectScrollbar(this.refs.scrollable)
     }
 
@@ -45,6 +44,7 @@ export class PriceList extends React.Component {
                 </div>
                 <div className="m-0 p-0 mT-20 pos-r">
                     <input type="file"
+                           ref="fileInput"
                            id="price-list-file-input"
                            className="d-n"
                            accept=".csv"
@@ -66,8 +66,11 @@ export class PriceList extends React.Component {
 }
 
 const mapStateToProps = state => {
+    const stockKey = state.stocks.activeStock.key
+
     return {
-        prices: state.prices
+        prices: state.prices[stockKey],
+        stockKey: stockKey
     }
 }
 

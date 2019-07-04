@@ -52,10 +52,13 @@ export const setOperationField = operationField => {
         operationField
     }
 }
-export const setPrices = prices => {
+export const setPrices = (prices, stockKey) => {
     return {
         type: SET_PRICES,
-        prices
+        payload: {
+            prices,
+            stockKey
+        }
     }
 }
 export const createEvent = event => {
@@ -100,9 +103,12 @@ export const selectStock = stock => {
         stock
     }
 }
-export const setStats = stats => {
+export const setStats = (stats, stockKey) => {
     return {
         type: SET_STATS,
-        stats
+        payload: {
+            stats,
+            stockKey
+        }
     }
 }

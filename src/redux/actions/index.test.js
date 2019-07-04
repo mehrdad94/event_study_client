@@ -102,13 +102,17 @@ it('should create an action to set operationField', function () {
 
 it('should create an action to set prices', function () {
     const prices = [{ key: 'value' }]
+    const stockKey = '123'
 
     const result = {
         type: SET_PRICES,
-        prices
+        payload: {
+            prices,
+            stockKey
+        }
     }
 
-    expect(setPrices(prices)).toEqual(result)
+    expect(setPrices(prices, stockKey)).toEqual(result)
 })
 
 it('should create an action to create an event', function () {
@@ -213,11 +217,16 @@ it('should create an action to set statistical', function () {
         }
     }
 
+    const stockKey = '123'
+
     const result = {
         type: SET_STATS,
-        stats
+        payload: {
+            stats,
+            stockKey
+        }
     }
 
-    expect(setStats(stats)).toEqual(result)
+    expect(setStats(stats, stockKey)).toEqual(result)
 })
 

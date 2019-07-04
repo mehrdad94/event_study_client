@@ -5,7 +5,8 @@ import {
 export default function stats (state = {}, action) {
     if (action.type === SET_STATS) {
         return {
-            ...action.stats
+            ...state,
+            [action.payload.stockKey]: action.payload.stats
         }
     } else {
         return state

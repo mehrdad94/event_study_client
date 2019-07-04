@@ -7,7 +7,12 @@ import {
 it('should set prices information', function () {
     const initialState = {}
     const data = [{ key: '1', name: 'name' }]
-    const action = { type: SET_PRICES, prices: data }
+    const stockKey = '1234'
+    const action = { type: SET_PRICES, payload: { stockKey, prices: data } }
 
-    expect(prices(initialState, action)).toEqual(data)
+    const result = {
+        [stockKey]: data
+    }
+
+    expect(prices(initialState, action)).toEqual(result)
 })

@@ -6,8 +6,15 @@ import {
 
 it('should set stats information', function () {
     const initialState = {}
-    const data = { key: '1', name: 'name' }
-    const action = { type: SET_STATS, stats: data }
 
-    expect(stats(initialState, action)).toEqual(data)
+    const statsData = { key: '1', name: 'name' }
+    const activeStockKey = '1234'
+
+    const action = { type: SET_STATS, payload: { stats: statsData, stockKey: activeStockKey } }
+
+    const result = {
+        [activeStockKey]: statsData
+    }
+
+    expect(stats(initialState, action)).toEqual(result)
 })
