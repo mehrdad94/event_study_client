@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
-import { createEvent, updateEvent, deleteEvent } from '../../redux/actions'
+import { createEvent, updateEvent, deleteEvent, selectEvent } from '../../redux/actions'
 import { EventItem } from './EventItem/EventItem'
 import { EventDialog } from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
@@ -55,12 +55,18 @@ export class EventList extends React.Component {
         })
     }
 
+    onEventClick = event => {
+        this.props.selectEvent(event)
+    }
+
     renderEvents = () => {
         if (!this.props.eventList) return null
 
         return this.props.eventList.map(item => (
           <EventItem onDeleteClick={() => this.onDeleteClick(item)}
                      onEditClick={() => this.onEditClick(item)}
+                     onItemClick={() => this.onEventClick(item)}
+                     isActive={this.props.activeEvent.key === item.key}
                      key={item.key}
                      {...item}/>)
         )
@@ -152,7 +158,8 @@ const mapStateToProps = state => {
     const stockKey = state.stocks.activeStock.key
 
     return {
-        eventList: state.events[stockKey],
+        eventList: state.events.events[stockKey],
+        activeEvent: state.events.activeEvent,
         stockKey: stockKey
     }
 }
@@ -160,7 +167,8 @@ const mapStateToProps = state => {
 const actionCreators = {
     createEvent,
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    selectEvent
 }
 
 export default connect(mapStateToProps, actionCreators)(EventList)

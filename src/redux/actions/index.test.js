@@ -9,6 +9,7 @@ import {
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
+    SELECT_EVENT,
     CREATE_STOCK,
     UPDATE_STOCK,
     DELETE_STOCK,
@@ -27,6 +28,7 @@ import {
     createEvent,
     updateEvent,
     deleteEvent,
+    selectEvent,
     createStock,
     updateStock,
     deleteStock,
@@ -163,6 +165,19 @@ it('should create an action to delete an event', function () {
     expect(deleteEvent(key, stockKey)).toEqual(result)
 })
 
+it('should select an Event', function () {
+    const event = {
+        key: 'event key',
+        name: 'another name'
+    }
+
+    const result = {
+        type: SELECT_EVENT,
+        event
+    }
+
+    expect(selectEvent(event)).toEqual(result)
+});
 
 it('should create an action to create a stock', function () {
     const stock = {

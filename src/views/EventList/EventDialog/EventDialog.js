@@ -34,7 +34,7 @@ export class EventDialog extends React.Component {
 
     onAccept = () => {
         EventDialog.hideModal()
-        this.props.onAccept(this.state)
+        this.props.onAccept(Object.assign({}, this.state))
     }
 
     componentDidMount (){

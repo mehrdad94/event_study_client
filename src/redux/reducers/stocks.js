@@ -4,6 +4,8 @@ import {
     DELETE_STOCK, SELECT_STOCK
 } from '../ActionTypes'
 
+import { isObjectEmpty } from '../../lib/helper'
+
 const defaultState = {
     stockList: [],
     activeStock: {}
@@ -14,7 +16,8 @@ export default function stocks (state = defaultState, action) {
         case CREATE_STOCK:
             return {
                 ...state,
-                stockList: [action.stock, ...state.stockList]
+                stockList: [action.stock, ...state.stockList],
+                activeStock: isObjectEmpty(state.activeStock) ? action.stock : state.activeStock
             }
         case UPDATE_STOCK:
             return {

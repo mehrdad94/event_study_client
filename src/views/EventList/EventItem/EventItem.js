@@ -3,18 +3,24 @@ import PropTypes from 'prop-types'
 
 export class EventItem extends React.Component {
     onDeleteClick = e => {
+        e.stopPropagation()
         this.props.onDeleteClick(e)
     }
 
     onEditClick = e => {
+        e.stopPropagation()
         this.props.onEditClick(e)
+    }
+
+    onItemClick = e => {
+        this.props.onItemClick(e)
     }
 
     render() {
         const { title, description, date } = this.props
-
+        const activeEventClass = this.props.isActive ? 'bgc-grey-50' : ''
         return (
-            <li className="bdB peers ai-c jc-sb fxw-nw">
+            <li onClick={this.onItemClick} className={`bdB peers ai-c bgcH-grey-50 jc-sb fxw-nw cur-p item ${activeEventClass}`}>
                 <a className="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
                     <div className="peer">
                         <span className="fw-600 eventItemTitle">{title}</span>
@@ -50,7 +56,9 @@ EventItem.propTypes = {
     date: PropTypes.string,
     description: PropTypes.string,
     onDeleteClick: PropTypes.func,
-    onEditClick: PropTypes.func
+    onEditClick: PropTypes.func,
+    onItemClick: PropTypes.func,
+    isActive: PropTypes.bool
 }
 
 EventItem.defaultProps = {
@@ -58,5 +66,7 @@ EventItem.defaultProps = {
     date: '',
     description: '...',
     onDeleteClick: () => {},
-    onEditClick: () => {}
+    onEditClick: () => {},
+    onItemClick: () => {},
+    isActive: false
 }

@@ -34,7 +34,7 @@ describe("Stocks reducer", function () {
 
         const result = {
             stockList: [stock],
-            activeStock: {}
+            activeStock: stock
         }
 
         expect(stocks(initialState, action)).toEqual(result)

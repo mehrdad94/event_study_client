@@ -9,6 +9,7 @@ import {
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
+    SELECT_EVENT,
     CREATE_STOCK,
     UPDATE_STOCK,
     DELETE_STOCK,
@@ -86,6 +87,12 @@ export const deleteEvent = (key, stockKey) => {
             key,
             stockKey
         }
+    }
+}
+export const selectEvent = event => {
+    return {
+        type: SELECT_EVENT,
+        event
     }
 }
 export const createStock = stock => {

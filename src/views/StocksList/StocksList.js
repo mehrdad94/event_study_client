@@ -5,6 +5,7 @@ import { createStock, deleteStock, selectStock } from '../../redux/actions/index
 import { Item } from '../../components/Item/Item'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import './StocksList.scss'
+import PerfectScrollbar from 'perfect-scrollbar'
 
 let stockKeyToDelete
 const deleteStockQuestion = 'Do you want to delete that Item?'
@@ -53,15 +54,25 @@ export class StocksList extends React.Component {
         this.props.deleteStock(stockKeyToDelete)
     }
 
+    onKeyDown = event => {
+        if (event.key === 'Enter') {
+            this.onAddClick()
+        }
+    }
+
     renderStocksList = () => {
         return this.props.stocks.map(stock => (
           <Item {...stock}
                 onDeleteClick={() => this.onDeleteClick(stock.key)}
                 onItemClick={() => this.props.selectStock(stock)}
+                isActive={stock.key === this.props.activeStock.key}
                 key={stock.key}/>
         ))
     }
-
+    componentDidMount() {
+        new PerfectScrollbar(this.refs.scrollable)
+        this.refs.stockInput.focus()
+    }
     render () {
         return (
             <div className="peer stocks-list h-100p">
@@ -70,8 +81,9 @@ export class StocksList extends React.Component {
                         <input type="text"
                                placeholder="Stock Name"
                                name="Name"
-                               ref="stock"
+                               ref="stockInput"
                                value={this.state.stockNameInputValue}
+                               onKeyDown={this.onKeyDown}
                                onChange={e => this.onInputChange(e.target.value, 'stockNameInputValue')}
                                className="form-constrol p-15 bdrs-0 w-100 bdw-0"/>
                         <button type="button"
@@ -81,7 +93,7 @@ export class StocksList extends React.Component {
                         </button>
                     </div>
 
-                    <div className="layer w-100 fxg-1 scrollable pos-r">
+                    <div className="layer w-100 fxg-1 scrollable pos-r" ref="scrollable">
                         { this.renderStocksList() }
                     </div>
                     <div>
@@ -98,7 +110,8 @@ export class StocksList extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        stocks: state.stocks.stockList
+        stocks: state.stocks.stockList,
+        activeStock: state.stocks.activeStock
     }
 }
 

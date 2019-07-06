@@ -8,7 +8,8 @@ it('should test props', function () {
         onItemClick: jest.fn(),
         title: 'title',
         description: 'description',
-        descriptionColor: 'success'
+        descriptionColor: 'success',
+        isActive: true
     }
 
     const wrapper = enzyme.mount(<Item {...props}/>)
@@ -22,6 +23,8 @@ it('should test props', function () {
 
     const deleteButton = wrapper.find('.item-delete-btn')
     const item = wrapper.find('.item')
+
+    expect(item.hasClass('bgc-grey-50')).toBe(true)
 
     deleteButton.simulate('click')
     item.simulate('click')

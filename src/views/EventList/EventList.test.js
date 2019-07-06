@@ -19,7 +19,8 @@ describe('Event list', function () {
         eventList,
         createEvent: jest.fn(),
         updateEvent: jest.fn(),
-        deleteEvent: jest.fn()
+        deleteEvent: jest.fn(),
+        selectEvent: jest.fn()
     }
 
     beforeEach(() => {
@@ -92,4 +93,14 @@ describe('Event list', function () {
 
         expect(props.deleteEvent).toHaveBeenCalled()
     })
+
+    it('should select an event', function () {
+        const findElement = elm => wrapper.find(elm)
+
+        const eventItems = () => findElement('#event-items')
+
+        eventItems().find('.item').simulate('click')
+
+        expect(props.selectEvent).toHaveBeenCalled()
+    });
 })

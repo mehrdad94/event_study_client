@@ -25,6 +25,8 @@ export class PriceList extends React.Component {
     onFileChange = e => {
         const file = e.target.files[0]
 
+        e.target.value = ''
+
         if (!file) return
 
         csvToJson(file)

@@ -11,6 +11,7 @@ export const SET_PRICES = 'SET_PRICES'
 export const CREATE_EVENT = 'CREATE_EVENT'
 export const UPDATE_EVENT = 'UPDATE_EVENT'
 export const DELETE_EVENT = 'DELETE_EVENT'
+export const SELECT_EVENT = 'SELECT_EVENT'
 
 export const CREATE_STOCK = 'CREATE_STOCK'
 export const UPDATE_STOCK = 'UPDATE_STOCK'
