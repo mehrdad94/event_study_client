@@ -5,9 +5,10 @@ import { isObjectEmpty } from './lib/helper'
 import StocksList from './views/StocksList/StocksList'
 import EventList from './views/EventList/EventList'
 import PriceList from './views/PriceList/PriceList'
-import { Header } from './views/Header/Header'
+import Header from './views/Header/Header'
 // import Chart from './views/Chart/Chart'
 import { Unavailable } from './components/Unavailable/Unavailable'
+import Setting from './views/Setting/Setting'
 import './App.scss'
 
 const CREATE_STOCK = "Create a Stock"
@@ -33,6 +34,7 @@ export class App extends React.Component {
     return (
       <div className="h-100p">
         <div className="page-container h-100p">
+          <Setting/>
           <Header/>
           <main className='main-content bgc-grey-200'>
             <div id='mainContent' className="h-100p">

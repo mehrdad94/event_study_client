@@ -51,6 +51,9 @@ export class StocksList extends React.Component {
     }
 
     onDeleteConfirmAccept = () => {
+        this.setState({
+            showDeleteConfirmDialog: false
+        })
         this.props.deleteStock(stockKeyToDelete)
     }
 

@@ -4,7 +4,8 @@ import {
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
-    SELECT_EVENT
+    SELECT_EVENT,
+    DESELECT_EVENT
 } from '../ActionTypes'
 
 describe('events reducer', function () {
@@ -13,17 +14,19 @@ describe('events reducer', function () {
     beforeEach(() => {
         initialState = {
             events: {},
-            activeEvent: {}
+            activeEvents: {}
         }
     })
 
     it('should handle initial state', () => {
         const initialState = undefined
-        const action = {}
+        const action = {
+            payload: {}
+        }
 
         const result = {
             events: {},
-            activeEvent: {}
+            activeEvents: {}
         }
 
         expect(events(initialState, action)).toEqual(result)
@@ -39,7 +42,11 @@ describe('events reducer', function () {
             events: {
                 [stockKey]: [event]
             },
-            activeEvent: event
+            activeEvents: {
+                [stockKey]: {
+                    [event.key]: event
+                }
+            }
         }
 
         expect(events(initialState, action)).toEqual(result)
@@ -60,7 +67,7 @@ describe('events reducer', function () {
             events: {
                 [stockKey]: [newEvent]
             },
-            activeEvent: {}
+            activeEvents: {}
         }
 
         expect(events(initialState, action)).toEqual(result)
@@ -74,7 +81,11 @@ describe('events reducer', function () {
             [stockKey]: [event]
         }
 
-        initialState['activeEvent'] = event
+        initialState['activeEvents'] = {
+            [stockKey]: {
+                [event.key]: event
+            }
+        }
 
         const action = { type: DELETE_EVENT, payload: { key: event.key, stockKey } }
 
@@ -82,20 +93,72 @@ describe('events reducer', function () {
             events: {
                 [stockKey]: []
             },
-            activeEvent: {}
+            activeEvents: {
+                [stockKey]: {}
+            }
         }
 
         expect(events(initialState, action)).toEqual(result)
     })
 
-    it('should select an event', function () {
+    it('should select two events', function () {
+        const stockKey = '1234'
         const event = { key: '1', name: 'name' }
+        const event2 = { key: '2', name: 'another name' }
 
-        const action = { type: SELECT_EVENT, event }
+        const action = {
+            type: SELECT_EVENT,
+            payload: {
+                event,
+                stockKey
+            }
+        }
+        const action2 = {
+            type: SELECT_EVENT,
+            payload: {
+                event: event2,
+                stockKey
+            }
+        }
 
         const result = {
             events: {},
-            activeEvent: event
+            activeEvents: {
+                [stockKey]: {
+                    [event.key]: event,
+                    [event2.key]: event2
+                }
+            }
+        }
+
+        const firstState = events(initialState, action)
+
+        expect(events(firstState, action2)).toEqual(result)
+    });
+
+    it('should deselect an event', function () {
+        const stockKey = '1234'
+        const event = { key: '1', name: 'name' }
+
+        initialState['activeEvents'] = {
+            [stockKey]: {
+                [event.key]: event
+            }
+        }
+
+        const action = {
+            type: DESELECT_EVENT,
+            payload: {
+                event,
+                stockKey
+            }
+        }
+
+        const result = {
+            events: {},
+            activeEvents: {
+                [stockKey]: {}
+            }
         }
 
         expect(events(initialState, action)).toEqual(result)

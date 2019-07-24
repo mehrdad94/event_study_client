@@ -1,50 +1,58 @@
 import {
-    SET_TOT1,
+    SET_T0T1,
     SET_T1E,
     SET_ET2,
     SET_T2T3,
-    SET_DATE_FIELD,
-    SET_OPERATION_FIELD,
-    SET_PRICES,
+    SET_DATE_COLUMN,
+    SET_OPERATION_COLUMN,
+    SET_STOCK_PRICES,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
     SELECT_EVENT,
+    DESELECT_EVENT,
     CREATE_STOCK,
     UPDATE_STOCK,
     DELETE_STOCK,
     SELECT_STOCK,
-    SET_STATS
+    SET_STATS,
+    SHOW_SETTING,
+    HIDE_SETTING,
+    SET_DEFAULT_EVENT_DATE_FORMAT
 } from '../ActionTypes'
 
 import {
-    setTOT1,
+    setT0T1,
     setT1E,
     setET2,
     setT2T3,
-    setDateField,
-    setOperationField,
+    setDateColumn,
+    setOperationColumn,
     setPrices,
     createEvent,
     updateEvent,
     deleteEvent,
     selectEvent,
+    deselectEvent,
     createStock,
     updateStock,
     deleteStock,
     selectStock,
-    setStats
+    setStats,
+    showSetting,
+    hideSetting,
+    setDefaultEventDateFormat
 } from './index'
 
-it('should create an action to set TOT1', function () {
+it('should create an action to set T0T1', function () {
     const value = 1
 
     const result = {
-        type: SET_TOT1,
+        type: SET_T0T1,
         value,
     }
 
-    expect(setTOT1(value)).toEqual(result)
+    expect(setT0T1(value)).toEqual(result)
 })
 
 it('should create an action to set T1E', function () {
@@ -84,22 +92,22 @@ it('should create an action to set dateField', function () {
     const dateField = 1
 
     const result = {
-        type: SET_DATE_FIELD,
+        type: SET_DATE_COLUMN,
         dateField
     }
 
-    expect(setDateField(dateField)).toEqual(result)
+    expect(setDateColumn(dateField)).toEqual(result)
 })
 
 it('should create an action to set operationField', function () {
     const operationField = 1
 
     const result = {
-        type: SET_OPERATION_FIELD,
+        type: SET_OPERATION_COLUMN,
         operationField
     }
 
-    expect(setOperationField(operationField)).toEqual(result)
+    expect(setOperationColumn(operationField)).toEqual(result)
 })
 
 it('should create an action to set prices', function () {
@@ -107,7 +115,7 @@ it('should create an action to set prices', function () {
     const stockKey = '123'
 
     const result = {
-        type: SET_PRICES,
+        type: SET_STOCK_PRICES,
         payload: {
             prices,
             stockKey
@@ -170,13 +178,33 @@ it('should select an Event', function () {
         key: 'event key',
         name: 'another name'
     }
-
+    const stockKey = '1'
     const result = {
         type: SELECT_EVENT,
-        event
+        payload: {
+            event,
+            stockKey
+        }
     }
 
-    expect(selectEvent(event)).toEqual(result)
+    expect(selectEvent(event, stockKey)).toEqual(result)
+});
+
+it('should deselect an Event', function () {
+    const event = {
+        key: 'event key',
+        name: 'another name'
+    }
+    const stockKey = '1'
+    const result = {
+        type: DESELECT_EVENT,
+        payload: {
+            event,
+            stockKey
+        }
+    }
+
+    expect(deselectEvent(event, stockKey)).toEqual(result)
 });
 
 it('should create an action to create a stock', function () {
@@ -253,3 +281,23 @@ it('should create an action to set statistical', function () {
     expect(setStats(stats, stockKey)).toEqual(result)
 })
 
+it('should show setting', function () {
+    expect(showSetting()).toEqual({
+        type: SHOW_SETTING
+    })
+})
+
+it('should hide setting', function () {
+    expect(hideSetting()).toEqual({
+        type: HIDE_SETTING
+    })
+})
+
+it('should generate action to set default event date format', function () {
+    const value = 'yyyy-dd-mm'
+
+    expect(setDefaultEventDateFormat(value)).toEqual({
+        type: SET_DEFAULT_EVENT_DATE_FORMAT,
+        value
+    })
+});

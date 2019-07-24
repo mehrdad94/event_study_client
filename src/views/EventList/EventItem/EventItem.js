@@ -25,8 +25,7 @@ export class EventItem extends React.Component {
                     <div className="peer">
                         <span className="fw-600 eventItemTitle">{title}</span>
                         <div className="c-grey-600">
-                            <span className="c-grey-700 eventItemDate">{date} - </span>
-                            <i className="eventItemDescription">{description}</i>
+                            <span className="c-grey-700 eventItemDate">{date}</span>
                         </div>
                     </div>
                 </a>

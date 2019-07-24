@@ -16,7 +16,7 @@ it('should check props', function () {
     const descriptionComponent = wrapper.find('.eventItemDescription')
 
     expect(titleComponent.text()).toBe(props.title)
-    expect(dateComponent.text()).toBe(`${props.date} - `)
+    expect(dateComponent.text()).toBe(`${props.date}`)
     expect(descriptionComponent.text()).toBe(props.description)
 })
 

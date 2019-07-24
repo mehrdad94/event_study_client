@@ -46,9 +46,7 @@ Item.propTypes = {
 
 Item.defaultProps = {
     onDeleteClick: () => {},
-    onItemClick: () => {
-        console.log('on item click')
-    },
+    onItemClick: () => {},
     title: '',
     description: '',
     descriptionColor: '',

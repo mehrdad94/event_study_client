@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react'
 import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
-import { createEvent, updateEvent, deleteEvent, selectEvent } from '../../redux/actions'
+import { createEvent, updateEvent, deleteEvent, selectEvent, deselectEvent } from '../../redux/actions'
 import { EventItem } from './EventItem/EventItem'
 import { EventDialog } from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
+import { Unavailable } from '../../components/Unavailable/Unavailable'
 import './EventList.scss'
-import {Unavailable} from "../../components/Unavailable/Unavailable";
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
 const addEventDialogTitle = 'Add Event'
@@ -56,7 +56,11 @@ export class EventList extends React.Component {
     }
 
     onEventClick = event => {
-        this.props.selectEvent(event)
+        if (this.props.activeEvents[event.key]) {
+            this.props.deselectEvent(event, this.props.stockKey)
+        } else {
+            this.props.selectEvent(event, this.props.stockKey)
+        }
     }
 
     renderEvents = () => {
@@ -66,7 +70,7 @@ export class EventList extends React.Component {
           <EventItem onDeleteClick={() => this.onDeleteClick(item)}
                      onEditClick={() => this.onEditClick(item)}
                      onItemClick={() => this.onEventClick(item)}
-                     isActive={this.props.activeEvent.key === item.key}
+                     isActive={Boolean(this.props.activeEvents[item.key])}
                      key={item.key}
                      {...item}/>)
         )
@@ -80,7 +84,7 @@ export class EventList extends React.Component {
             eventDialogProps: {
                 title: '',
                 date: '',
-                description: ''
+                ...this.props
             }
         })
     }
@@ -108,6 +112,9 @@ export class EventList extends React.Component {
     }
 
     onDeleteEventAccept = () => {
+        this.setState({
+            isConfirmDialogActive: false
+        })
         this.props.deleteEvent(eventToModify.key, this.props.stockKey)
     }
 
@@ -138,6 +145,7 @@ export class EventList extends React.Component {
 
                 {/* Add and Edit Dialog */}
                 <EventDialog isActive={this.state.isEventDialogActive}
+                             defaultEventDateFormat={this.props.defaultEventDateFormat}
                              dialogTitle={this.state.eventDialogTitle}
                              onModalClose={this.onEventAddModalClose}
                              onAccept={this.onEventDialogAccept}
@@ -159,8 +167,15 @@ const mapStateToProps = state => {
 
     return {
         eventList: state.events.events[stockKey],
-        activeEvent: state.events.activeEvent,
-        stockKey: stockKey
+        activeEvents: state.events.activeEvents[stockKey],
+        stockKey: stockKey,
+        dateColumn: state.setting.dateColumn,
+        operationColumn: state.setting.operationColumn,
+        defaultEventDateFormat: state.setting.defaultEventDateFormat,
+        T0T1: state.setting.T0T1,
+        T1E: state.setting.T1E,
+        ET2: state.setting.ET2,
+        T2T3: state.setting.T2T3
     }
 }
 
@@ -168,7 +183,8 @@ const actionCreators = {
     createEvent,
     updateEvent,
     deleteEvent,
-    selectEvent
+    selectEvent,
+    deselectEvent
 }
 
 export default connect(mapStateToProps, actionCreators)(EventList)
