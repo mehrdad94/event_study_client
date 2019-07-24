@@ -4,9 +4,8 @@ import PerfectScrollbar from 'perfect-scrollbar'
 import { isObjectEmpty } from './lib/helper'
 import StocksList from './views/StocksList/StocksList'
 import EventList from './views/EventList/EventList'
-import PriceList from './views/PriceList/PriceList'
+import Analysis from './views/Analysis/Analysis'
 import Header from './views/Header/Header'
-// import Chart from './views/Chart/Chart'
 import { Unavailable } from './components/Unavailable/Unavailable'
 import Setting from './views/Setting/Setting'
 import './App.scss'
@@ -50,7 +49,7 @@ export class App extends React.Component {
                       <EventList/>
                     </div>
                     <div className="col-md-8 h-100p">
-                      <PriceList/>
+                      <Analysis/>
                     </div>
                   </div>
                 </div>

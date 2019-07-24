@@ -23,16 +23,16 @@ export class Header extends React.Component {
 
           </ul>
           <ul className="nav-right">
-            <li>
-              <a href="#" onClick={Header.onExportClick}>
-                <i className="ti-export"/>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <i className="ti-folder"/>
-              </a>
-            </li>
+            {/*<li>*/}
+            {/*  <a href="#" onClick={Header.onExportClick}>*/}
+            {/*    <i className="ti-export"/>*/}
+            {/*  </a>*/}
+            {/*</li>*/}
+            {/*<li>*/}
+            {/*  <a href="#">*/}
+            {/*    <i className="ti-folder"/>*/}
+            {/*  </a>*/}
+            {/*</li>*/}
             <li>
               <a href="#" onClick={this.showSetting}>
                 <i className="ti-settings"/>

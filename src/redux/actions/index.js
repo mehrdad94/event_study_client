@@ -5,7 +5,6 @@ import {
     SET_T2T3,
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
-    SET_STOCK_PRICES,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
@@ -57,15 +56,7 @@ export const setOperationColumn = operationColumn => {
         operationColumn
     }
 }
-export const setPrices = (prices, stockKey) => {
-    return {
-        type: SET_STOCK_PRICES,
-        payload: {
-            prices,
-            stockKey
-        }
-    }
-}
+
 export const createEvent = (event, stockKey) => {
     return {
         type: CREATE_EVENT,

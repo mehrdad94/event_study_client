@@ -5,7 +5,6 @@ import {
     SET_T2T3,
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
-    SET_STOCK_PRICES,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
@@ -108,21 +107,6 @@ it('should create an action to set operationField', function () {
     }
 
     expect(setOperationColumn(operationField)).toEqual(result)
-})
-
-it('should create an action to set prices', function () {
-    const prices = [{ key: 'value' }]
-    const stockKey = '123'
-
-    const result = {
-        type: SET_STOCK_PRICES,
-        payload: {
-            prices,
-            stockKey
-        }
-    }
-
-    expect(setPrices(prices, stockKey)).toEqual(result)
 })
 
 it('should create an action to create an event', function () {

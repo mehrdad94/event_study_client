@@ -5,6 +5,15 @@ export const isObjectEmpty = obj => {
   return true
 }
 
+export const hasObjectMoreThanOneProperty = obj => {
+  let count = 0
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) count += 1
+    if (count > 1) return true
+  }
+  return false
+}
+
 export const downloadJsonText = (filename, data) => {
   const blob = new Blob([data], { type: 'application/json' })
 

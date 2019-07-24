@@ -6,8 +6,6 @@ export const SET_T2T3 = 'SET_T2T3'
 export const SET_DATE_COLUMN = 'SET_DATE_COLUMN'
 export const SET_OPERATION_COLUMN = 'SET_OPERATION_COLUMN'
 
-export const SET_STOCK_PRICES = 'SET_STOCK_PRICES'
-
 export const CREATE_EVENT = 'CREATE_EVENT'
 export const UPDATE_EVENT = 'UPDATE_EVENT'
 export const DELETE_EVENT = 'DELETE_EVENT'
