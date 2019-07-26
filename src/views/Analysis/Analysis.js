@@ -1,82 +1,89 @@
+import './Analysis.scss'
+
 import React from 'react'
 import { connect } from 'react-redux'
+import { createSelector } from 'reselect'
 import PerfectScrollbar from 'perfect-scrollbar'
-import './Analysis.scss'
-import { Unavailable } from '../../components/Unavailable/Unavailable'
-import { isObjectEmpty } from '../../lib/helper'
-import { MarketModel } from 'event-study'
-import { LineChart } from '../../components/LineChart/LineChart'
+import groupBy from 'ramda/src/groupBy'
+import prop from 'ramda/src/prop'
+import mapObjIndexed from 'ramda/src/mapObjIndexed'
+import map from 'ramda/src/map'
 
-const ANALYSE_EVENTS = "Analyse Events"
-const ANALYSE_EVENTS_DESCRIPTION = "You need to create and select at least One event in order to get analysis"
+import { Unavailable } from '../../components/Unavailable/Unavailable'
+import { isObjectEmpty, sequence } from '../../lib/helper'
+import { MarketModel, AAR, CAR } from 'event-study'
+import { LineChart } from '../../components/LineChart/LineChart'
+import {COLORS} from "../../lib/colors";
+
+const UNAVAILABLE_TITLE = "Analyse Events"
+const UNAVAILABLE_DESCRIPTION = "You need to create and select at least One event in order to get analysis"
+
+const UNAVAILABLE_ANALYSIS_TITLE = "No Analysis Available"
+const UNAVAILABLE_ANALYSIS_DESCRIPTION = "If you want your final analysis hit analyse button"
 
 const unavailableProps = {
-    title: ANALYSE_EVENTS,
-    description: ANALYSE_EVENTS_DESCRIPTION,
+    title: UNAVAILABLE_TITLE,
+    description: UNAVAILABLE_DESCRIPTION,
     isActive: true
 }
 
-const getNewsType = type => {
-  if (type === 0) {
-    return ''
-  } else if (type === 1) {
-    return 'good'
+const unavailableAnalysisProps = {
+  title: UNAVAILABLE_ANALYSIS_TITLE,
+  description: UNAVAILABLE_ANALYSIS_DESCRIPTION,
+  isActive: true
+}
+
+const getChartLabelBasedOnNewsType = type => {
+  type = type.toString()
+
+  if (type === '0') {
+    return 'Neutral'
+  } else if (type === '-1') {
+    return 'Bad News'
   } else {
-    return 'bad'
+    return 'Good News'
   }
 }
 
-const getIconCLass = type => {
-  if (type === 'bad') {
-    return 'fa fa-level-down c-red-500'
-  } else if (type === 'good') {
-    return 'fa fa-level-up c-green-500'
-  } else {
-    return 'fa fa-border c-green-500'
-  }
-}
+const getChartStyleBasedOnNewsType = type => {
+  type = type.toString()
 
-const News = props => {
-  const getContent = type => {
-    if (type === 'bad') {
-      return 'Bad News '
-    } else if (type === 'good') {
-      return 'Good News '
-    } else {
-      return 'No News'
+  if (type === '0') {
+    return {
+      backgroundColor: 'rgba(237, 231, 246, 0.5)',
+      borderColor: COLORS['grey-500'],
+      pointBackgroundColor: COLORS['grey-700'],
+      borderWidth: 2,
+    }
+  } else if (type === '-1') {
+    return {
+      backgroundColor: 'rgba(237, 231, 246, 0.5)',
+      borderColor: COLORS['red-500'],
+      pointBackgroundColor: COLORS['red-700'],
+      borderWidth: 2,
+    }
+  } else {
+    return {
+      backgroundColor: 'rgba(237, 231, 246, 0.5)',
+      borderColor: COLORS['green-500'],
+      pointBackgroundColor: COLORS['green-700'],
+      borderWidth: 2,
     }
   }
-
-  return (
-    <div className="peer fw-600">
-            <span className="fsz-def fw-600 mR-10 c-grey-800">
-                {getContent(props.type)}
-              <i className={getIconCLass(props.type)}/>
-            </span>
-      <small className="c-grey-500 fw-600">News Type</small>
-    </div>
-  )
 }
 
-const Significant = props => {
-  const getContent = type => {
-    if (type === 'good') {
-      return 'Significant '
-    } else {
-      return 'Insignificant '
-    }
+
+export const lineChartLineStyle = type => {
+  return {
+    ...getChartStyleBasedOnNewsType(type),
+    label: getChartLabelBasedOnNewsType(type)
   }
-
-  return (
-    <div className="peer fw-600">
-            <span className="fsz-def fw-600 mR-10 c-grey-800">
-                {getContent(props.type)}
-              <i className={getIconCLass(props.type)}/>
-            </span>
-      <small className="c-grey-500 fw-600">Significant Test</small>
-    </div>
-  )
 }
+
+export const createLineChartDataSet = (data, type) => ({
+  data,
+  ...lineChartLineStyle(type)
+})
 
 export class Analysis extends React.Component {
     state = {
@@ -84,12 +91,16 @@ export class Analysis extends React.Component {
     }
 
     renderUnavailableComponent = () => {
-        if (isObjectEmpty(this.props.activeEvents)) return <Unavailable {...unavailableProps}/>
+        const hasNoActiveEvents = isObjectEmpty(this.props.activeEvents)
+        const hasNoAnalysis = isObjectEmpty(this.state.statsPerEvents)
+
+        if (hasNoActiveEvents) return <Unavailable {...unavailableProps}/>
+        else if (!hasNoActiveEvents && hasNoAnalysis) return <Unavailable {...unavailableAnalysisProps}/>
         else return null
     }
 
     onAnalyseClick = () => {
-        const events = Object.values(this.props.activeEvents)
+        const events = this.props.activeEvents
 
         const calendar = events.map(event => {
             const { date, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = event
@@ -122,15 +133,36 @@ export class Analysis extends React.Component {
     }
 
     getChartData = () => {
-        const events = this.props.activeEvents ? Object.values(this.props.activeEvents) : []
-
         const result = {
           labels: [],
           dataSets: [],
-          newsType: null,
-          significantTest: null
+          chartLegend: ''
         }
+
+        if (!this.props.activeEvents) return result
+
+        const events = this.props.activeEvents
+
         if (events.length > 1) {
+            const analysis = Object.values(this.state.statsPerEvents)
+
+            if (analysis.length <= 1) return result
+
+            const newsByType = groupBy(prop('newsType'), analysis)
+
+            const newsAbnormalReturns = mapObjIndexed(map(prop('abnormalReturn')), newsByType)
+
+            const averageAbnormalReturn = mapObjIndexed(AAR, newsAbnormalReturns)
+
+            const cumulativeAbnormalReturn = mapObjIndexed(CAR, averageAbnormalReturn)
+
+            const dataSets = mapObjIndexed((data, key) => {
+              return createLineChartDataSet(data, key)
+            }, cumulativeAbnormalReturn)
+
+            result.labels = sequence(events[0].ET2 + events[0].T1E - 1).map(item => item - events[0].T1E)
+            result.dataSets = Object.values(dataSets)
+            result.chartLegend = 'CAAR Stats (Cumulative Average Abnormal Return):'
         } else if (events.length === 1) {
             const event = events[0]
             const analysis = this.state.statsPerEvents[event.key]
@@ -138,16 +170,13 @@ export class Analysis extends React.Component {
             if (!analysis) return result
 
             const labels = analysis.returnDates
-            const dataSets = [analysis.CARS]
+            const dataSets = [analysis.CARS].map(data => createLineChartDataSet(data, analysis.newsType))
 
             result.labels = labels
             result.dataSets = dataSets
-
-            result.newsType = getNewsType(analysis.newsType)
-            result.significantTest = analysis.significantTest[event.T1E - 1] ? 'good' : ''
-        } else {
-
+            result.chartLegend = 'CAR Stats for: ' + event.date
         }
+
         return result
     }
 
@@ -161,7 +190,6 @@ export class Analysis extends React.Component {
         return (
             <div className="bdrs-3 ov-h bgc-white h-100p bd">
                 <div className="bgc-deep-purple-500 ta-c p-30">
-                    <h1 className="fw-300 mB-5 lh-1 c-white">01<span className="fsz-def">st</span></h1>
                     <h3 className="c-white">Analysis</h3>
                 </div>
                 <div className="m-0 p-0 pos-r analysis-scroll-container-wrap">
@@ -178,18 +206,11 @@ export class Analysis extends React.Component {
                        <div className="bd bgc-white">
                           <div className="layers">
                             <div className="layer w-100 pX-20 pT-20">
-                              <h6 className="lh-1">CAR Stats</h6>
+                              <h6 className="lh-1">{chartsData.chartLegend}</h6>
                             </div>
                             <div className="layer w-100 p-20">
                               <LineChart {...chartsData}/>
                             </div>
-
-                            {/*<div className="layer bdT p-20 w-100">*/}
-                            {/*  <div className="peers ai-c jc-c gapX-20">*/}
-                            {/*    <Significant type={chartsData.significantTest}/>*/}
-                            {/*    <News type={chartsData.newsType}/>*/}
-                            {/*  </div>*/}
-                            {/*</div>*/}
                          </div>
                       </div>
                     </div>
@@ -199,12 +220,22 @@ export class Analysis extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    const stockKey = state.stocks.activeStock.key
 
+// selectors
+const getStockKey = state => state.stocks.activeStock.key
+const getEventList = state => state.events.events[state.stocks.activeStock.key] || []
+const getActiveEventsKeys = state => state.events.activeEvents[state.stocks.activeStock.key] || {}
+
+const getActiveEvents = createSelector([getEventList, getActiveEventsKeys], (eventList, eventKeys) => {
+  return eventList.filter(e => eventKeys[e.key])
+})
+
+
+const mapStateToProps = state => {
     return {
-        stockKey,
-        activeEvents: state.events.activeEvents[stockKey],
+        stockKey: getStockKey(state),
+        eventList: getEventList(state),
+        activeEvents: getActiveEvents(state)
     }
 }
 

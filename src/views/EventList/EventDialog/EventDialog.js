@@ -5,13 +5,14 @@ import { csvToJson } from '../../../lib/csv'
 
 let jqueryModalRef
 let datePicker
+let eventDialogStockPriceInput
+let eventDialogMarketPriceInput
 
 const genState = props => {
     const {
         title = '',
         defaultEventDateFormat = '',
         date = '',
-        description = '',
         stock = {},
         market = {},
         dateColumn = '',
@@ -26,7 +27,6 @@ const genState = props => {
         title,
         date,
         defaultEventDateFormat,
-        description,
         stock,
         market,
         dateColumn,
@@ -73,8 +73,8 @@ export class EventDialog extends React.Component {
         this.props.onAccept(Object.assign({}, this.state))
     }
     onDialogClose = () => {
-        document.getElementById('eventDialogStockPriceInput').value = ''
-        document.getElementById('eventDialogMarketPriceInput').value = ''
+        if (eventDialogStockPriceInput) eventDialogStockPriceInput.value = ''
+        if (eventDialogMarketPriceInput) eventDialogMarketPriceInput.value = ''
     }
     onDialogOpen = () => {
         this.setState(genState(this.props))
@@ -98,6 +98,9 @@ export class EventDialog extends React.Component {
         if (this.props.isActive) EventDialog.showModal()
 
         datePicker = $('.event-date').datepicker({ format: this.state.defaultEventDateFormat }).on('changeDate', this.onDatepickerChange)
+
+        eventDialogStockPriceInput = document.getElementById('eventDialogStockPriceInput')
+        eventDialogMarketPriceInput = document.getElementById('eventDialogMarketPriceInput')
     }
 
     componentDidUpdate (prevProps) {
@@ -183,28 +186,28 @@ export class EventDialog extends React.Component {
                                            onChange={e => this.handleChange('operationColumn', e)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label className="fw-500">Pre event window (T0T1)</label>
+                                    <label className="fw-500">Estimation period (T0T1)</label>
                                     <input className="form-control bdc-grey-200"
                                            id="eventAddT0T1"
                                            value={this.state.T0T1}
                                            onChange={e => this.handleChange('T0T1', e)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label className="fw-500">End of pre event window till event date (T1E)</label>
+                                    <label className="fw-500">Pre-announcement window (T1E)</label>
                                     <input className="form-control bdc-grey-200"
                                            id="eventAddT1E"
                                            value={this.state.T1E}
                                            onChange={e => this.handleChange('T1E', e)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label className="fw-500">Event date till post event window (ET2)</label>
+                                    <label className="fw-500">Post-announcement window (ET2)</label>
                                     <input className="form-control bdc-grey-200"
                                            id="eventAddET2"
                                            value={this.state.ET2}
                                            onChange={e => this.handleChange('ET2', e)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label className="fw-500">Post event window (T2T3)</label>
+                                    <label className="fw-500">Post event period (T2T3)</label>
                                     <input className="form-control bdc-grey-200"
                                            id="eventAddT2T3"
                                            value={this.state.T2T3}

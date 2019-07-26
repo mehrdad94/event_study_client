@@ -71,7 +71,7 @@ describe("Stocks reducer", function () {
         expect(stocks(initialState, action)).toEqual(result)
     })
 
-    it('should select an Item', function () {
+    it('should select an StocksItem', function () {
         const stock = { key: '1', name: 'name' }
 
         initialState.stockList.push(stock)

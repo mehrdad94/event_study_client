@@ -22,7 +22,7 @@ export default function events (state = initialState, action) {
             return {
                 ...state,
                 events: update(state.events, {[action.payload.stockKey]: { $push: [action.payload.event] }}),
-                activeEvents: update(state.activeEvents, {[action.payload.stockKey]: { [action.payload.event.key]: {$set: action.payload.event } }})
+                activeEvents: update(state.activeEvents, {[action.payload.stockKey]: { [action.payload.event.key]: {$set: action.payload.event.key } }})
             }
         }
         case UPDATE_EVENT:
@@ -53,7 +53,7 @@ export default function events (state = initialState, action) {
         }
         case SELECT_EVENT: {
             if (!state.activeEvents[action.payload.stockKey]) state.activeEvents[action.payload.stockKey] = {}
-            const activeEvents = update(state.activeEvents, { [action.payload.stockKey ]: { [action.payload.event.key]: { $set: action.payload.event } } })
+            const activeEvents = update(state.activeEvents, { [action.payload.stockKey ]: { [action.payload.event.key]: { $set: action.payload.event.key } } })
             return {
                 ...state,
                 activeEvents

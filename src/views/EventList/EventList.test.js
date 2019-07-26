@@ -8,19 +8,27 @@ import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'
 describe('Event list', function () {
     let wrapper
 
-    const eventList = [{
+    const event = {
         key: uuid(),
         title: 'title',
         date: 'dateValue',
         description: 'descriptionValue'
-    }]
+    }
+
+    const eventList = [event]
+
+    const activeEvents = {
+        [event.key]: event.key
+    }
 
     const props = {
         eventList,
+        activeEvents,
         createEvent: jest.fn(),
         updateEvent: jest.fn(),
         deleteEvent: jest.fn(),
-        selectEvent: jest.fn()
+        selectEvent: jest.fn(),
+        deselectEvent: jest.fn()
     }
 
     beforeEach(() => {
@@ -45,15 +53,12 @@ describe('Event list', function () {
 
         const titleField = () => findElement('#eventAddTitle')
         const dateField = () => findElement('#eventAddDate')
-        const descriptionField = () => findElement('#eventAddDescription')
 
         const titleValue = 'title'
         const dateValue = 'dateValue'
-        const descriptionValue = 'descriptionValue'
 
         titleField().simulate('change', { target: { value: titleValue} })
         dateField().simulate('change', { target: { value: dateValue } })
-        descriptionField().simulate('change', { target: { value: descriptionValue } })
 
         const acceptButton = () => findElement('#event-dialog-modal .modal-footer .btn-primary')
 
@@ -94,7 +99,21 @@ describe('Event list', function () {
         expect(props.deleteEvent).toHaveBeenCalled()
     })
 
+    it('should deselect an event', function () {
+        const findElement = elm => wrapper.find(elm)
+
+        const eventItems = () => findElement('#event-items')
+
+        eventItems().find('.item').simulate('click')
+
+        expect(props.deselectEvent).toHaveBeenCalled()
+    })
+
     it('should select an event', function () {
+        wrapper.setProps({
+            activeEvents: {}
+        })
+
         const findElement = elm => wrapper.find(elm)
 
         const eventItems = () => findElement('#event-items')
@@ -102,5 +121,5 @@ describe('Event list', function () {
         eventItems().find('.item').simulate('click')
 
         expect(props.selectEvent).toHaveBeenCalled()
-    });
+    })
 })

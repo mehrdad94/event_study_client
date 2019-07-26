@@ -44,7 +44,7 @@ describe('events reducer', function () {
             },
             activeEvents: {
                 [stockKey]: {
-                    [event.key]: event
+                    [event.key]: event.key
                 }
             }
         }
@@ -83,7 +83,7 @@ describe('events reducer', function () {
 
         initialState['activeEvents'] = {
             [stockKey]: {
-                [event.key]: event
+                [event.key]: event.key
             }
         }
 
@@ -125,8 +125,8 @@ describe('events reducer', function () {
             events: {},
             activeEvents: {
                 [stockKey]: {
-                    [event.key]: event,
-                    [event2.key]: event2
+                    [event.key]: event.key,
+                    [event2.key]: event2.key
                 }
             }
         }
@@ -142,7 +142,7 @@ describe('events reducer', function () {
 
         initialState['activeEvents'] = {
             [stockKey]: {
-                [event.key]: event
+                [event.key]: event.key
             }
         }
 

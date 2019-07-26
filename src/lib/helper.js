@@ -29,3 +29,16 @@ export const downloadJsonText = (filename, data) => {
     document.body.removeChild(elem)
   }
 }
+
+export const sequence = count => {
+  const result = []
+
+  if (typeof count !== 'number') return result
+  if (count <= 0) return result
+
+  for (let i = 0; i <= count; i++) {
+    result.push(i)
+  }
+
+  return result
+}

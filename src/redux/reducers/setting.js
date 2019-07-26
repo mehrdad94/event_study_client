@@ -10,10 +10,10 @@ import {
 
 const dateColumn = 'Date'
 const operationColumn = 'Close'
-const T0T1 = 60
+const T0T1 = 40
 const T1E = 7
-const ET2 = 3
-const T2T3 = 10
+const ET2 = 7
+const T2T3 = 5
 const defaultEventDateFormat = 'yyyy-mm-dd'
 
 const initialState = {

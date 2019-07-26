@@ -60,28 +60,28 @@ export class Setting extends React.Component {
                  onChange={e => this.handleChange('defaultEventDateFormat', e)}/>
         </div>
         <div className="form-group">
-          <label className="fw-500">Pre event window (T0T1)</label>
+          <label className="fw-500">Estimation period (T0T1)</label>
           <input className="form-control bdc-grey-200"
                  id="settingT0T1"
                  value={this.state.T0T1}
                  onChange={e => this.handleChange('T0T1', e)}/>
         </div>
         <div className="form-group">
-          <label className="fw-500">End of pre event window till event date (T1E)</label>
+          <label className="fw-500">Pre-announcement window  (T1E)</label>
           <input className="form-control bdc-grey-200"
                  id="settingT1E"
                  value={this.state.T1E}
                  onChange={e => this.handleChange('T1E', e)}/>
         </div>
         <div className="form-group">
-          <label className="fw-500">Event date till post event window (ET2)</label>
+          <label className="fw-500">Post-announcement window (ET2)</label>
           <input className="form-control bdc-grey-200"
                  id="settingET2"
                  value={this.state.ET2}
                  onChange={e => this.handleChange('ET2', e)}/>
         </div>
         <div className="form-group">
-          <label className="fw-500">Post event window (T2T3)</label>
+          <label className="fw-500">Post event period (T2T3)</label>
           <input className="form-control bdc-grey-200"
                  id="settingT2T3"
                  value={this.state.T2T3}

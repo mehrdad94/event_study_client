@@ -17,7 +17,7 @@ export class EventItem extends React.Component {
     }
 
     render() {
-        const { title, description, date } = this.props
+        const { title, date } = this.props
         const activeEventClass = this.props.isActive ? 'bgc-grey-50' : ''
         return (
             <li onClick={this.onItemClick} className={`bdB peers ai-c bgcH-grey-50 jc-sb fxw-nw cur-p item ${activeEventClass}`}>

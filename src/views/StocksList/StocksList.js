@@ -2,13 +2,13 @@ import React from 'react'
 import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
 import { createStock, deleteStock, selectStock } from '../../redux/actions/index'
-import { Item } from '../../components/Item/Item'
+import { StocksItem } from './StocksItem/StocksItem'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import './StocksList.scss'
 import PerfectScrollbar from 'perfect-scrollbar'
 
 let stockKeyToDelete
-const deleteStockQuestion = 'Do you want to delete that Item?'
+const deleteStockQuestion = 'Do you want to delete that StocksItem?'
 
 export class StocksList extends React.Component {
     state = {
@@ -65,11 +65,11 @@ export class StocksList extends React.Component {
 
     renderStocksList = () => {
         return this.props.stocks.map(stock => (
-          <Item {...stock}
-                onDeleteClick={() => this.onDeleteClick(stock.key)}
-                onItemClick={() => this.props.selectStock(stock)}
-                isActive={stock.key === this.props.activeStock.key}
-                key={stock.key}/>
+          <StocksItem {...stock}
+                      onDeleteClick={() => this.onDeleteClick(stock.key)}
+                      onItemClick={() => this.props.selectStock(stock)}
+                      isActive={stock.key === this.props.activeStock.key}
+                      key={stock.key}/>
         ))
     }
     componentDidMount() {

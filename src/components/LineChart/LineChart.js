@@ -1,22 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Chart from 'chart.js'
-import { COLORS } from '../../lib/colors'
 
 let chart
 
 export class LineChart extends React.Component {
     getChartData = () => {
         const labels = this.props.labels
-        const dataSets = this.props.dataSets.map((data, index) => ({
-              label: `Series ${index}`,
-              backgroundColor: 'rgba(237, 231, 246, 0.5)',
-              borderColor: COLORS['deep-purple-500'],
-              pointBackgroundColor: COLORS['deep-purple-700'],
-              borderWidth: 2,
-              data
-          })
-        )
+        const dataSets = this.props.dataSets
 
         return {
             labels,
@@ -40,7 +31,7 @@ export class LineChart extends React.Component {
             },
             options: {
                 legend: {
-                    display: false,
+                    display: true
                 }
             }
         })

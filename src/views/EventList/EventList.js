@@ -123,7 +123,6 @@ export class EventList extends React.Component {
             <Fragment>
                 <div className="bdrs-3 ov-h bgc-white h-100p bd">
                     <div className="bgc-deep-purple-500 ta-c p-30">
-                        <h1 className="fw-300 mB-5 lh-1 c-white">01<span className="fsz-def">st</span></h1>
                         <h3 className="c-white">Event List</h3>
                     </div>
                     <div className="pos-r event-items-wrap">

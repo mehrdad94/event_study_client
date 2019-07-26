@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export class Item extends React.Component {
+export class StocksItem extends React.Component {
     onDeleteClick = event => {
         event.stopPropagation()
         this.props.onDeleteClick()
@@ -35,7 +35,7 @@ export class Item extends React.Component {
     }
 }
 
-Item.propTypes = {
+StocksItem.propTypes = {
     onDeleteClick: PropTypes.func,
     onItemClick: PropTypes.func,
     title: PropTypes.string,
@@ -44,7 +44,7 @@ Item.propTypes = {
     isActive: PropTypes.bool
 }
 
-Item.defaultProps = {
+StocksItem.defaultProps = {
     onDeleteClick: () => {},
     onItemClick: () => {},
     title: '',

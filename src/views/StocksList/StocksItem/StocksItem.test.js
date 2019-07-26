@@ -1,6 +1,6 @@
 import React from 'react'
-import { Item } from './Item'
-import enzyme from '../../lib/enzyme'
+import { StocksItem } from './StocksItem'
+import enzyme from '../../../lib/enzyme'
 
 it('should test props', function () {
     const props = {
@@ -12,7 +12,7 @@ it('should test props', function () {
         isActive: true
     }
 
-    const wrapper = enzyme.mount(<Item {...props}/>)
+    const wrapper = enzyme.mount(<StocksItem {...props}/>)
 
     const titleComponent = wrapper.find('.item-title')
     const descriptionComponent = wrapper.find('.item-description')
