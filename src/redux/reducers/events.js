@@ -40,7 +40,7 @@ export default function events (state = initialState, action) {
                 }
             }
         case DELETE_EVENT: {
-            const eventIndex = state.events[action.payload.stockKey].findIndex(event => event.key !== action.payload.key)
+            const eventIndex = state.events[action.payload.stockKey].findIndex(event => event.key === action.payload.key)
 
             const events = update(state.events, { [action.payload.stockKey]: { $splice: [[eventIndex, 1]] } })
             const activeEvents = update(state.activeEvents, { [action.payload.stockKey ]: { $unset: [action.payload.key] }})
