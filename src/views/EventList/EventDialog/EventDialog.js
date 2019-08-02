@@ -1,17 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import $ from 'jquery'
+import FormInput from '../../../components/FormInput/FormInput'
+import FormPicker from '../../../components/FormDatepicker/FormDatepicker'
+import FormFile from '../../../components/FormFile/FormFile'
+
 import { csvToJson } from '../../../lib/csv'
+import {
+    validateTimelineKey,
+    validateColumnName,
+    validatePrices
+} from 'event-study'
 
 let jqueryModalRef
-let datePicker
-let eventDialogStockPriceInput
-let eventDialogMarketPriceInput
 
-const genState = props => {
+const genFormValues = props => {
     const {
         title = '',
-        defaultEventDateFormat = '',
         date = '',
         stock = {},
         market = {},
@@ -26,7 +32,6 @@ const genState = props => {
     return {
         title,
         date,
-        defaultEventDateFormat,
         stock,
         market,
         dateColumn,
@@ -38,11 +43,32 @@ const genState = props => {
     }
 }
 
-export class EventDialog extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = genState(props)
+const genState = props => {
+    const {
+        defaultEventDateFormat = '',
+        invalidFeedBacks = {
+            title: '',
+            date: '',
+            stock: '',
+            market: '',
+            dateColumn: '',
+            operationColumn: '',
+            T0T1: '',
+            T1E: '',
+            ET2: '',
+            T2T3: ''
+        }
+    } = props
+
+    return {
+        defaultEventDateFormat,
+        invalidFeedBacks
     }
+}
+
+export class EventDialog extends React.Component {
+    state = genState(this.props)
+    formValues = genFormValues(this.props)
 
     static showModal () {
         jqueryModalRef.modal('show')
@@ -53,7 +79,7 @@ export class EventDialog extends React.Component {
     }
 
     handleChange (type, event) {
-        this.setState({ [type]: event.target.value})
+        this.formValues[type] = event.target.value
     }
 
     onFileChange = (type, e) => {
@@ -63,52 +89,83 @@ export class EventDialog extends React.Component {
 
         csvToJson(file)
           .then(json => {
-              this.setState({
-                  [type]: json
-              })
+              this.formValues[type] = json
           })
     }
+
     onAccept = () => {
+        // validate
+        const isTitleInvalid = validateColumnName(this.formValues.title) || ''
+        const isValidDate = validateColumnName(this.formValues.date) || ''
+        const isDateColumnInvalid = validateColumnName(this.formValues.dateColumn) || ''
+        const isOperationColumnInvalid = validateColumnName(this.formValues.operationColumn) || ''
+        const isT0T1Invalid = validateTimelineKey(this.formValues.T0T1) || ''
+        const isT1EInvalid = validateTimelineKey(this.formValues.T1E) || ''
+        const isET2Invalid = validateTimelineKey(this.formValues.ET2) || ''
+        const isT2T3Invalid = validateTimelineKey(this.formValues.T2T3) || ''
+        const isStockPriceInvalid = validatePrices(this.formValues.stock, this.formValues.dateColumn, this.formValues.operationColumn) || ''
+        const isMarketPriceInvalid = validatePrices(this.formValues.market, this.formValues.dateColumn, this.formValues.operationColumn) || ''
+
+        if (isTitleInvalid ||
+            isValidDate ||
+            isDateColumnInvalid ||
+            isOperationColumnInvalid ||
+            isT0T1Invalid ||
+            isT1EInvalid ||
+            isET2Invalid ||
+            isT2T3Invalid ||
+            isStockPriceInvalid ||
+            isMarketPriceInvalid) {
+            this.setState({
+                invalidFeedBacks: {
+                    title: isTitleInvalid.toString(),
+                    date: isValidDate.toString(),
+                    stock: isStockPriceInvalid.toString(),
+                    market: isMarketPriceInvalid.toString(),
+                    dateColumn: isDateColumnInvalid.toString(),
+                    operationColumn: isOperationColumnInvalid.toString(),
+                    T0T1: isT0T1Invalid.toString(),
+                    T1E: isT1EInvalid.toString(),
+                    ET2: isET2Invalid.toString(),
+                    T2T3: isT2T3Invalid.toString()
+                }
+            })
+            return
+        }
+
         EventDialog.hideModal()
-        this.props.onAccept(Object.assign({}, this.state))
+
+        this.props.onAccept(Object.assign({}, this.formValues))
     }
-    onDialogClose = () => {
-        if (eventDialogStockPriceInput) eventDialogStockPriceInput.value = ''
-        if (eventDialogMarketPriceInput) eventDialogMarketPriceInput.value = ''
-    }
-    onDialogOpen = () => {
-        this.setState(genState(this.props))
-    }
-    onDatepickerChange = e => {
-        this.handleChange('date', e)
-    }
+
     componentDidMount (){
         jqueryModalRef = $(this.refs.modal)
 
         jqueryModalRef.on('hidden.bs.modal', e => {
-            this.onDialogClose()
             this.props.onModalClose(e)
         })
 
         jqueryModalRef.on('shown.bs.modal', e => {
-            this.onDialogOpen()
             this.props.onModalOpen(e)
         })
 
         if (this.props.isActive) EventDialog.showModal()
+    }
 
-        datePicker = $('.event-date').datepicker({ format: this.state.defaultEventDateFormat }).on('changeDate', this.onDatepickerChange)
-
-        eventDialogStockPriceInput = document.getElementById('eventDialogStockPriceInput')
-        eventDialogMarketPriceInput = document.getElementById('eventDialogMarketPriceInput')
+    componentWillUpdate (nextProps) {
+        if (this.props.isActive !== nextProps.isActive) {
+            if (nextProps.isActive) {
+                this.formValues = genFormValues(Object.assign({}, this.props, nextProps.event))
+            } else {
+                this.formValues = genFormValues({})
+                this.setState(genState({}))
+            }
+        }
     }
 
     componentDidUpdate (prevProps) {
         if (this.props.isActive !== prevProps.isActive) {
             this.props.isActive ? EventDialog.showModal() : EventDialog.hideModal()
-        }
-        if (this.props.defaultEventDateFormat !== prevProps.defaultEventDateFormat) {
-            datePicker.datepicker('destroy').datepicker({ format: this.props.defaultEventDateFormat }).on('changeDate', this.onDatepickerChange)
         }
     }
 
@@ -123,95 +180,84 @@ export class EventDialog extends React.Component {
                         <div className="modal-body">
                             <form>
                                 <div className="form-group">
-                                    <label className="fw-500">Event title</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddTitle"
-                                           value={this.state.title}
-                                           onChange={e => this.handleChange('title', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Event title' }
+                                      inputValue={ this.formValues.title }
+                                      invalidFeedback={ this.state.invalidFeedBacks.title }
+                                      onChange={ event => this.handleChange('title', event) }/>
                                 </div>
+
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <label className="fw-500">Date</label>
-                                        <div className="timepicker-input input-icon form-group">
-                                            <div className="input-group">
-                                                <div className="input-group-addon bgc-white bd bdwR-0">
-                                                    <i className="ti-calendar"/>
-                                                </div>
-                                                <input type="text"
-                                                       className="form-control bdc-grey-200 event-date"
-                                                       placeholder="Datepicker"
-                                                       data-provide="datepicker"
-                                                       id="eventAddDate"
-                                                       value={this.state.date}
-                                                       onChange={e => this.handleChange('date', e)}/>
-                                            </div>
-                                        </div>
+                                        <FormPicker pickerLabel={ 'Date' }
+                                                    pickerValue={ this.formValues.date }
+                                                    invalidFeedback={ this.state.invalidFeedBacks.date }
+                                                    onChange={ event => this.handleChange('date', event) }/>
                                     </div>
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="fw-500"
-                                           htmlFor="eventDialogStockPriceInput">Stock prices</label>
-                                    <input type="file"
-                                           accept=".csv"
-                                           onClick={(e) => { e.target.value = null }}
-                                           onChange={(e) => this.onFileChange('stock', e)}
-                                           className="form-control-file bdc-grey-200"
-                                           id="eventDialogStockPriceInput"/>
+                                    <FormFile accept={ '.csv' }
+                                              identifier={ 'eventDialogStockPriceInput' }
+                                              inputLabel={ 'Stock prices' }
+                                              invalidFeedback={ this.state.invalidFeedBacks.stock }
+                                              onChange={e => this.onFileChange('stock', e)}/>
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="fw-500"
-                                           htmlFor="eventDialogMarketPriceInput">Market prices</label>
-                                    <input type="file"
-                                           accept=".csv"
-                                           onClick={(e) => { e.target.value = null }}
-                                           onChange={(e) => this.onFileChange('market', e)}
-                                           className="form-control-file bdc-grey-200"
-                                           id="eventDialogMarketPriceInput"/>
+                                    <FormFile accept={ '.csv' }
+                                              identifier={ 'eventDialogMarketPriceInput' }
+                                              inputLabel={ 'Market prices' }
+                                              invalidFeedback={ this.state.invalidFeedBacks.market }
+                                              onChange={e => this.onFileChange('market', e)}/>
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="fw-500">Date Column</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddDateColumn"
-                                           value={this.state.dateColumn}
-                                           onChange={e => this.handleChange('dateColumn', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Date Column' }
+                                      inputValue={ this.formValues.dateColumn }
+                                      invalidFeedback={ this.state.invalidFeedBacks.dateColumn }
+                                      onChange={ event => this.handleChange('dateColumn', event) }/>
                                 </div>
+
                                 <div className="form-group">
-                                    <label className="fw-500">Operation Column</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddOperationColumn"
-                                           value={this.state.operationColumn}
-                                           onChange={e => this.handleChange('operationColumn', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Operation Column' }
+                                      inputValue={ this.formValues.operationColumn }
+                                      invalidFeedback={ this.state.invalidFeedBacks.operationColumn }
+                                      onChange={ event => this.handleChange('operationColumn', event) }/>
                                 </div>
+
                                 <div className="form-group">
-                                    <label className="fw-500">Estimation period (T0T1)</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddT0T1"
-                                           value={this.state.T0T1}
-                                           onChange={e => this.handleChange('T0T1', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Estimation period (T0T1)' }
+                                      inputValue={ this.formValues.T0T1 }
+                                      invalidFeedback={ this.state.invalidFeedBacks.T0T1 }
+                                      onChange={ event => this.handleChange('T0T1', event) }/>
                                 </div>
+
                                 <div className="form-group">
-                                    <label className="fw-500">Pre-announcement window (T1E)</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddT1E"
-                                           value={this.state.T1E}
-                                           onChange={e => this.handleChange('T1E', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Pre-announcement window (T1E)' }
+                                      inputValue={ this.formValues.T1E }
+                                      invalidFeedback={ this.state.invalidFeedBacks.T1E }
+                                      onChange={ event => this.handleChange('T1E', event) }/>
                                 </div>
+
                                 <div className="form-group">
-                                    <label className="fw-500">Post-announcement window (ET2)</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddET2"
-                                           value={this.state.ET2}
-                                           onChange={e => this.handleChange('ET2', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Post-announcement window (ET2)' }
+                                      inputValue={ this.formValues.ET2 }
+                                      invalidFeedback={ this.state.invalidFeedBacks.ET2 }
+                                      onChange={ event => this.handleChange('ET2', event) }/>
                                 </div>
+
                                 <div className="form-group">
-                                    <label className="fw-500">Post event period (T2T3)</label>
-                                    <input className="form-control bdc-grey-200"
-                                           id="eventAddT2T3"
-                                           value={this.state.T2T3}
-                                           onChange={e => this.handleChange('T2T3', e)}/>
+                                    <FormInput
+                                      inputLabel={ 'Post event period (T2T3)' }
+                                      inputValue={ this.formValues.T2T3 }
+                                      invalidFeedback={ this.state.invalidFeedBacks.T2T3 }
+                                      onChange={ event => this.handleChange('T2T3', event) }/>
                                 </div>
                             </form>
                         </div>
@@ -234,7 +280,9 @@ EventDialog.propTypes = {
     dialogTitle: PropTypes.string,
     title: PropTypes.string,
     date: PropTypes.string,
-    defaultEventDateFormat: PropTypes.string
+    defaultEventDateFormat: PropTypes.string,
+    event: PropTypes.object,
+    setting: PropTypes.object
 }
 
 EventDialog.defaultProps = {
@@ -246,3 +294,17 @@ EventDialog.defaultProps = {
     title: '',
     date: ''
 }
+
+const mapStateToProps = state => {
+    return {
+        dateColumn: state.setting.dateColumn,
+        operationColumn: state.setting.operationColumn,
+        defaultEventDateFormat: state.setting.defaultEventDateFormat,
+        T0T1: state.setting.T0T1,
+        T1E: state.setting.T1E,
+        ET2: state.setting.ET2,
+        T2T3: state.setting.T2T3
+    }
+}
+
+export default connect(mapStateToProps)(EventDialog)

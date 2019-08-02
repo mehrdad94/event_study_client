@@ -8,3 +8,8 @@
   text-align: center;
   border-radius: .25rem;
 }
+
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  border-color: #f44336!important;
+  background-image: none!important;
+}

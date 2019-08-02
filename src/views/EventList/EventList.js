@@ -3,7 +3,7 @@ import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
 import { createEvent, updateEvent, deleteEvent, selectEvent, deselectEvent } from '../../redux/actions'
 import { EventItem } from './EventItem/EventItem'
-import { EventDialog } from './EventDialog/EventDialog'
+import EventDialog from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import './EventList.scss'
@@ -27,7 +27,7 @@ const unavailableProps = {
 export class EventList extends React.Component {
     state = {
         eventDialogTitle: '',
-        eventDialogProps: {},
+        eventDialogEvent: {},
         isEventDialogActive: false,
         isConfirmDialogActive: false,
         eventList: []
@@ -49,9 +49,9 @@ export class EventList extends React.Component {
         eventDialogPhase = 'edit'
         eventToModify = event
         this.setState({
-            isEventDialogActive: true,
             eventDialogTitle: editEventDialogTitle,
-            eventDialogProps: event
+            eventDialogEvent: event,
+            isEventDialogActive: true
         })
     }
 
@@ -81,11 +81,7 @@ export class EventList extends React.Component {
         this.setState({
             isEventDialogActive: true,
             eventDialogTitle: addEventDialogTitle,
-            eventDialogProps: {
-                title: '',
-                date: '',
-                ...this.props
-            }
+            eventDialogEvent: {}
         })
     }
 
@@ -144,11 +140,10 @@ export class EventList extends React.Component {
 
                 {/* Add and Edit Dialog */}
                 <EventDialog isActive={this.state.isEventDialogActive}
-                             defaultEventDateFormat={this.props.defaultEventDateFormat}
                              dialogTitle={this.state.eventDialogTitle}
                              onModalClose={this.onEventAddModalClose}
                              onAccept={this.onEventDialogAccept}
-                             {...this.state.eventDialogProps}/>
+                             event={this.state.eventDialogEvent}/>
 
 
                 {/* Delete Confirm Dialog*/}
@@ -167,14 +162,7 @@ const mapStateToProps = state => {
     return {
         eventList: state.events.events[stockKey],
         activeEvents: state.events.activeEvents[stockKey],
-        stockKey: stockKey,
-        dateColumn: state.setting.dateColumn,
-        operationColumn: state.setting.operationColumn,
-        defaultEventDateFormat: state.setting.defaultEventDateFormat,
-        T0T1: state.setting.T0T1,
-        T1E: state.setting.T1E,
-        ET2: state.setting.ET2,
-        T2T3: state.setting.T2T3
+        stockKey: stockKey
     }
 }
 

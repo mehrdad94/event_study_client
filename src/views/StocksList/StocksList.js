@@ -26,6 +26,8 @@ export class StocksList extends React.Component {
         const key = uuid()
         const title = this.state.stockNameInputValue
 
+        if (!title) return
+
         this.props.createStock({
             key,
             title
@@ -89,6 +91,7 @@ export class StocksList extends React.Component {
                                onKeyDown={this.onKeyDown}
                                onChange={e => this.onInputChange(e.target.value, 'stockNameInputValue')}
                                className="form-constrol p-15 bdrs-0 w-100 bdw-0"/>
+
                         <button type="button"
                                 className="btn add btn-warning bdrs-50p w-2r p-0 h-2r pos-a r-10 t-10"
                                 onClick={this.onAddClick}>

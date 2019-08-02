@@ -2,9 +2,22 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Dialog } from '../../components/Dialog/Dialog'
 import { hideSetting } from '../../redux/actions'
-import { setDateColumn, setOperationColumn, setT0T1, setT1E, setET2, setT2T3, setDefaultEventDateFormat } from '../../redux/actions'
+import {
+  setDateColumn,
+  setOperationColumn,
+  setT0T1,
+  setT1E,
+  setET2,
+  setT2T3,
+  setDefaultEventDateFormat
+} from '../../redux/actions'
+import FormInput from '../../components/FormInput/FormInput'
+import {
+  validateTimelineKey,
+  validateColumnName
+} from 'event-study'
 
-const genState = props => {
+const genFormValues = props => {
   const {
     dateColumn = '',
     operationColumn = '',
@@ -26,8 +39,27 @@ const genState = props => {
   }
 }
 
+const genState = props => {
+  const {
+    invalidFeedBacks = {
+      dateColumn: '',
+      operationColumn: '',
+      T0T1: '',
+      T1E: '',
+      ET2: '',
+      T2T3: '',
+      defaultEventDateFormat: ''
+    }
+  } = props
+
+  return {
+    invalidFeedBacks
+  }
+}
+
 export class Setting extends React.Component {
   state = genState(this.props)
+  formValues = genFormValues(this.props)
 
   DialogHeader = () => {
     return (
@@ -39,53 +71,59 @@ export class Setting extends React.Component {
     return (
       <form>
         <div className="form-group">
-          <label className="fw-500">Date Column</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingDateColumn"
-                 value={this.state.dateColumn}
-                 onChange={e => this.handleChange('dateColumn', e)}/>
+          <FormInput
+              inputLabel={ 'Date Column' }
+              inputValue={ this.formValues.dateColumn }
+              invalidFeedback={ this.state.invalidFeedBacks.dateColumn }
+              onChange={ event => this.handleChange('dateColumn', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Operation Column</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingOperationColumn"
-                 value={this.state.operationColumn}
-                 onChange={e => this.handleChange('operationColumn', e)}/>
+          <FormInput
+            inputLabel={ 'Operation Column' }
+            inputValue={ this.formValues.operationColumn }
+            invalidFeedback={ this.state.invalidFeedBacks.operationColumn }
+            onChange={ event => this.handleChange('operationColumn', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Default Event Date Format (In create event dialog)</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingDefaultEventDate"
-                 value={this.state.defaultEventDateFormat}
-                 onChange={e => this.handleChange('defaultEventDateFormat', e)}/>
+          <FormInput
+            inputLabel={ 'Default Event Date Format (In create event dialog)' }
+            inputValue={ this.formValues.defaultEventDateFormat }
+            invalidFeedback={ this.state.invalidFeedBacks.defaultEventDateFormat }
+            onChange={ event => this.handleChange('defaultEventDateFormat', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Estimation period (T0T1)</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingT0T1"
-                 value={this.state.T0T1}
-                 onChange={e => this.handleChange('T0T1', e)}/>
+          <FormInput
+            inputLabel={ 'Estimation period (T0T1)' }
+            inputValue={ this.formValues.T0T1 }
+            invalidFeedback={ this.state.invalidFeedBacks.T0T1 }
+            onChange={ event => this.handleChange('T0T1', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Pre-announcement window  (T1E)</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingT1E"
-                 value={this.state.T1E}
-                 onChange={e => this.handleChange('T1E', e)}/>
+          <FormInput
+            inputLabel={ 'Pre-announcement window  (T1E)' }
+            inputValue={ this.formValues.T1E }
+            invalidFeedback={ this.state.invalidFeedBacks.T1E }
+            onChange={ event => this.handleChange('T1E', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Post-announcement window (ET2)</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingET2"
-                 value={this.state.ET2}
-                 onChange={e => this.handleChange('ET2', e)}/>
+          <FormInput
+            inputLabel={ 'Post-announcement window (ET2)' }
+            inputValue={ this.formValues.ET2 }
+            invalidFeedback={ this.state.invalidFeedBacks.ET2 }
+            onChange={ event => this.handleChange('ET2', event) }/>
         </div>
+
         <div className="form-group">
-          <label className="fw-500">Post event period (T2T3)</label>
-          <input className="form-control bdc-grey-200"
-                 id="settingT2T3"
-                 value={this.state.T2T3}
-                 onChange={e => this.handleChange('T2T3', e)}/>
+          <FormInput
+            inputLabel={ 'Post event period (T2T3)' }
+            inputValue={ this.formValues.T2T3 }
+            invalidFeedback={ this.state.invalidFeedBacks.T2T3 }
+            onChange={ event => this.handleChange('T2T3', event) }/>
         </div>
       </form>
     )
@@ -101,17 +139,50 @@ export class Setting extends React.Component {
   }
 
   handleChange = (type, event) => {
-    this.setState({ [type]: event.target.value})
+    this.formValues[type] = event.target.value
   }
 
   onAccept = () => {
-    this.props.setDateColumn(this.state.dateColumn)
-    this.props.setOperationColumn(this.state.operationColumn)
-    this.props.setT0T1(this.state.T0T1)
-    this.props.setT1E(this.state.T1E)
-    this.props.setET2(this.state.ET2)
-    this.props.setT2T3(this.state.T2T3)
-    this.props.setDefaultEventDateFormat(this.state.defaultEventDateFormat)
+    // validate
+    const isDateColumnInvalid = validateColumnName(this.formValues.dateColumn) || ''
+    const isOperationColumnInvalid = validateColumnName(this.formValues.operationColumn) || ''
+    const isT0T1Invalid = validateTimelineKey(this.formValues.T0T1) || ''
+    const isT1EInvalid = validateTimelineKey(this.formValues.T1E) || ''
+    const isET2Invalid = validateTimelineKey(this.formValues.ET2) || ''
+    const isT2T3Invalid = validateTimelineKey(this.formValues.T2T3) || ''
+    const isDefaultEventDateFormatInvalid = validateColumnName(this.formValues.defaultEventDateFormat) || ''
+
+    // if has error
+    if (isDateColumnInvalid ||
+        isOperationColumnInvalid ||
+        isT0T1Invalid ||
+        isT1EInvalid ||
+        isET2Invalid ||
+        isT2T3Invalid ||
+        isDefaultEventDateFormatInvalid) {
+      // set error
+      this.setState({
+        invalidFeedBacks: {
+          dateColumn: isDateColumnInvalid.toString(),
+          operationColumn: isOperationColumnInvalid.toString(),
+          T0T1: isT0T1Invalid.toString(),
+          T1E: isT1EInvalid.toString(),
+          ET2: isET2Invalid.toString(),
+          T2T3: isT2T3Invalid.toString(),
+          defaultEventDateFormat: isDefaultEventDateFormatInvalid.toString()
+        }
+      })
+      return
+    }
+
+    this.props.setDateColumn(this.formValues.dateColumn)
+    this.props.setOperationColumn(this.formValues.operationColumn)
+    this.props.setT0T1(this.formValues.T0T1)
+    this.props.setT1E(this.formValues.T1E)
+    this.props.setET2(this.formValues.ET2)
+    this.props.setT2T3(this.formValues.T2T3)
+    this.props.setDefaultEventDateFormat(this.formValues.defaultEventDateFormat)
+
     this.props.hideSetting()
   }
 
