@@ -14,7 +14,9 @@ import {
     UPDATE_STOCK,
     DELETE_STOCK,
     SELECT_STOCK,
-    SET_STATS,
+    CREATE_ANALYSIS,
+    UPDATE_ANALYSIS,
+    DELETE_ANALYSIS,
     SHOW_SETTING,
     HIDE_SETTING,
     SET_DEFAULT_EVENT_DATE_FORMAT
@@ -126,11 +128,31 @@ export const selectStock = stock => {
         stock
     }
 }
-export const setStats = (stats, stockKey) => {
+export const createAnalysis = (analysis, stockKey, eventKey) => {
     return {
-        type: SET_STATS,
+        type: CREATE_ANALYSIS,
         payload: {
-            stats,
+            analysis,
+            stockKey,
+            eventKey
+        }
+    }
+}
+export const updateAnalysis = (analysis, stockKey, eventKey) => {
+    return {
+        type: UPDATE_ANALYSIS,
+        payload: {
+            analysis,
+            stockKey,
+            eventKey
+        }
+    }
+}
+export const deleteAnalysis = (key, stockKey) => {
+    return {
+        type: DELETE_ANALYSIS,
+        payload: {
+            key,
             stockKey
         }
     }

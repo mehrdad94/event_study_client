@@ -1,12 +1,21 @@
 import React, { Fragment } from 'react'
 import uuid from 'uuid/v4'
 import { connect } from 'react-redux'
-import { createEvent, updateEvent, deleteEvent, selectEvent, deselectEvent } from '../../redux/actions'
+import {
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    selectEvent,
+    deselectEvent,
+    createAnalysis,
+    updateAnalysis
+} from '../../redux/actions'
 import { EventItem } from './EventItem/EventItem'
 import EventDialog from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import './EventList.scss'
+import { MarketModel } from 'event-study'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
 const addEventDialogTitle = 'Add Event'
@@ -98,12 +107,29 @@ export class EventList extends React.Component {
     }
 
     onEventDialogAccept = data => {
+        const { date, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = data
+
+        const timeline = { T0T1, T1E, ET2, T2T3 }
+
+        const calendar = [{
+            date,
+            stock,
+            market,
+            timeline,
+            dateColumn,
+            operationColumn
+        }]
+
+        const statsResult = MarketModel({ calendar })[0]
+
         if (eventDialogPhase === 'add') {
             data.key = uuid()
             this.props.createEvent(data, this.props.stockKey)
+            this.props.createAnalysis(statsResult, this.props.stockKey, data.key)
         } else {
             data.key = eventToModify.key
             this.props.updateEvent(data, this.props.stockKey)
+            this.props.updateAnalysis(statsResult, this.props.stockKey, data.key)
         }
     }
 
@@ -156,13 +182,16 @@ export class EventList extends React.Component {
     }
 }
 
-const mapStateToProps = state => {
-    const stockKey = state.stocks.activeStock.key
+// selectors
+const getStockKey = state => state.stocks.activeStock.key
+const getEventList = state => state.events.events[state.stocks.activeStock.key]
+const getActiveEvents = state => state.events.activeEvents[state.stocks.activeStock.key]
 
+const mapStateToProps = state => {
     return {
-        eventList: state.events.events[stockKey],
-        activeEvents: state.events.activeEvents[stockKey],
-        stockKey: stockKey
+        stockKey: getStockKey(state),
+        eventList: getEventList(state),
+        activeEvents: getActiveEvents(state)
     }
 }
 
@@ -171,7 +200,9 @@ const actionCreators = {
     updateEvent,
     deleteEvent,
     selectEvent,
-    deselectEvent
+    deselectEvent,
+    createAnalysis,
+    updateAnalysis
 }
 
 export default connect(mapStateToProps, actionCreators)(EventList)

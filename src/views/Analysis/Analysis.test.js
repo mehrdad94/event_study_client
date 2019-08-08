@@ -46,7 +46,7 @@ describe('Event list', function () {
     })
   })
 
-  it('should test getChartData method without stats', function () {
+  it('should test getChartData method without analysis', function () {
     const wrapper = enzyme.shallow(<Analysis/>)
 
     expect(wrapper.instance().getChartData()).toEqual({

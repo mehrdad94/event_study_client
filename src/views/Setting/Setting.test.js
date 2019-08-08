@@ -6,33 +6,20 @@ import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js'
 
 describe('Setting component', function () {
   let wrapper
+  const props = {
+    dateColumn: 'Date',
+    operationColumn: 'Close',
+    T0T1: '10',
+    T1E: '4',
+    ET2: '7',
+    T2T3: '5',
+    defaultEventDateFormat: 'yyyy-mm-dd'
+  }
 
   beforeEach(() => {
-    wrapper = enzyme.mount(<Setting/>)
+    wrapper = enzyme.mount(<Setting {...props}/>)
   })
 
-  const findElement = elm => wrapper.find(elm)
-
   it('should test input fields', function () {
-    const state = {
-      dateColumn: 'Date',
-      operationColumn: 'Close',
-      T0T1: '10',
-      T1E: '4',
-      ET2: '7',
-      T2T3: '5',
-      defaultEventDateFormat: 'yyyy-mm-dd',
-      invalidFeedBacks: {
-        dateColumn: '',
-        operationColumn: '',
-        T0T1: '',
-        T1E: '',
-        ET2: '',
-        T2T3: '',
-        defaultEventDateFormat: '',
-      }
-    }
-
-    wrapper.setState(state)
   })
 })

@@ -11,7 +11,7 @@ import map from 'ramda/src/map'
 
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import { isObjectEmpty, sequence } from '../../lib/helper'
-import { MarketModel, AAR, CAR } from 'event-study'
+import { AAR, CAR } from 'event-study'
 import { LineChart } from '../../components/LineChart/LineChart'
 import {COLORS} from "../../lib/colors";
 
@@ -72,7 +72,6 @@ const getChartStyleBasedOnNewsType = type => {
   }
 }
 
-
 export const lineChartLineStyle = type => {
   return {
     ...getChartStyleBasedOnNewsType(type),
@@ -86,50 +85,13 @@ export const createLineChartDataSet = (data, type) => ({
 })
 
 export class Analysis extends React.Component {
-    state = {
-        statsPerEvents: {}
-    }
-
     renderUnavailableComponent = () => {
         const hasNoActiveEvents = isObjectEmpty(this.props.activeEvents)
-        const hasNoAnalysis = isObjectEmpty(this.state.statsPerEvents)
+        const hasNoAnalysis = isObjectEmpty(this.props.analysis)
 
         if (hasNoActiveEvents) return <Unavailable {...unavailableProps}/>
         else if (!hasNoActiveEvents && hasNoAnalysis) return <Unavailable {...unavailableAnalysisProps}/>
         else return null
-    }
-
-    onAnalyseClick = () => {
-        const events = this.props.activeEvents
-
-        const calendar = events.map(event => {
-            const { date, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = event
-
-            const timeline = { T0T1, T1E, ET2, T2T3 }
-
-            return {
-                date,
-                stock,
-                market,
-                timeline,
-                dateColumn,
-                operationColumn
-            }
-        })
-
-        const statsResult = MarketModel({ calendar })
-
-        const result = statsResult.reduce((object, stats, index) => {
-            object[events[index].key] = stats
-            return object
-        }, {})
-
-        this.setState({
-          statsPerEvents: {
-              ...this.state.statsPerEvents,
-              ...result
-          }
-        })
     }
 
     getChartData = () => {
@@ -144,7 +106,7 @@ export class Analysis extends React.Component {
         const events = this.props.activeEvents
 
         if (events.length > 1) {
-            const analysis = Object.values(this.state.statsPerEvents)
+            const analysis = events.map(event => this.props.analysis[event.key])
 
             if (analysis.length <= 1) return result
 
@@ -160,12 +122,14 @@ export class Analysis extends React.Component {
               return createLineChartDataSet(data, key)
             }, cumulativeAbnormalReturn)
 
-            result.labels = sequence(events[0].ET2 + events[0].T1E - 1).map(item => item - events[0].T1E)
+            result.labels = sequence(events[0].ET2 + events[0].T1E - 1).map(item => item - (events[0].T1E - 1))
+
             result.dataSets = Object.values(dataSets)
+
             result.chartLegend = 'CAAR Stats (Cumulative Average Abnormal Return):'
         } else if (events.length === 1) {
             const event = events[0]
-            const analysis = this.state.statsPerEvents[event.key]
+            const analysis = this.props.analysis[event.key]
 
             if (!analysis) return result
 
@@ -196,12 +160,6 @@ export class Analysis extends React.Component {
                     {
                         this.renderUnavailableComponent()
                     }
-                    <button type="button"
-                            onClick={this.onAnalyseClick}
-                            className="mT-nv-50 pos-a r-10 zi-2 t-25 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning">
-                        <i className="ti-stats-up"/>
-                    </button>
-
                     <div className="pos-r" ref="scrollable" id="analysis-scroll-container">
                        <div className="bd bgc-white">
                           <div className="layers">
@@ -222,19 +180,24 @@ export class Analysis extends React.Component {
 
 
 // selectors
+const defaultEventList = []
+const defaultAnalysisList = []
+const defaultActiveEventsKeys = {}
+
 const getStockKey = state => state.stocks.activeStock.key
-const getEventList = state => state.events.events[state.stocks.activeStock.key] || []
-const getActiveEventsKeys = state => state.events.activeEvents[state.stocks.activeStock.key] || {}
+const getEventList = state => state.events.events[state.stocks.activeStock.key] || defaultEventList
+const getAnalysisList = state => state.analysis.analysis[state.stocks.activeStock.key] || defaultAnalysisList
+const getActiveEventsKeys = state => state.events.activeEvents[state.stocks.activeStock.key] || defaultActiveEventsKeys
 
 const getActiveEvents = createSelector([getEventList, getActiveEventsKeys], (eventList, eventKeys) => {
   return eventList.filter(e => eventKeys[e.key])
 })
 
-
 const mapStateToProps = state => {
     return {
         stockKey: getStockKey(state),
         eventList: getEventList(state),
+        analysis: getAnalysisList(state),
         activeEvents: getActiveEvents(state)
     }
 }

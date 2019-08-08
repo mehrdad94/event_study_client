@@ -16,7 +16,7 @@ describe('Test form input', function () {
 
     wrapper.update()
 
-    expect(wrapper.find('input').props().value).toBe(inputValue)
+    expect(wrapper.find('input').props().defaultValue).toBe(inputValue)
   })
 
   it('should set input label', function () {

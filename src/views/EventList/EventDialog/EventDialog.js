@@ -138,7 +138,7 @@ export class EventDialog extends React.Component {
         this.props.onAccept(Object.assign({}, this.formValues))
     }
 
-    componentDidMount (){
+    componentDidMount () {
         jqueryModalRef = $(this.refs.modal)
 
         jqueryModalRef.on('hidden.bs.modal', e => {
@@ -159,6 +159,8 @@ export class EventDialog extends React.Component {
             } else {
                 this.formValues = genFormValues({})
                 this.setState(genState({}))
+                document.getElementById('eventDialogStockPriceInput').value = ''
+                document.getElementById('eventDialogMarketPriceInput').value = ''
             }
         }
     }

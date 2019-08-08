@@ -28,7 +28,9 @@ describe('Event list', function () {
         updateEvent: jest.fn(),
         deleteEvent: jest.fn(),
         selectEvent: jest.fn(),
-        deselectEvent: jest.fn()
+        deselectEvent: jest.fn(),
+        createAnalysis: jest.fn(),
+        updateAnalysis: jest.fn()
     }
 
     beforeEach(() => {
@@ -65,6 +67,7 @@ describe('Event list', function () {
         acceptButton().simulate('click')
 
         expect(props.createEvent).toHaveBeenCalled()
+        expect(props.createAnalysis).toHaveBeenCalled()
     })
 
     it('should edit an event', function () {
@@ -85,6 +88,7 @@ describe('Event list', function () {
         acceptButton().simulate('click')
 
         expect(props.updateEvent).toHaveBeenCalled()
+        expect(props.updateAnalysis).toHaveBeenCalled()
     })
 
     it('should delete an event', function () {
