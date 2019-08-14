@@ -19,6 +19,9 @@ import {
     DELETE_ANALYSIS,
     SHOW_SETTING,
     HIDE_SETTING,
+    SHOW_STOCK_LIST,
+    HIDE_STOCK_LIST,
+    SET_ACTIVE_MAIN_FRAME,
     SET_DEFAULT_EVENT_DATE_FORMAT
 } from '../ActionTypes'
 
@@ -43,6 +46,9 @@ import {
     deleteAnalysis,
     showSetting,
     hideSetting,
+    showStockList,
+    hideStockList,
+    setActiveMainFrame,
     setDefaultEventDateFormat
 } from './index'
 
@@ -319,6 +325,26 @@ describe('should test actions', function () {
         })
     })
 
+    it('should show stock list', function () {
+        expect(showStockList()).toEqual({
+            type: SHOW_STOCK_LIST
+        })
+    })
+
+    it('should hide stock list', function () {
+        expect(hideStockList()).toEqual({
+            type: HIDE_STOCK_LIST
+        })
+    })
+
+    it('should set active main frame', function () {
+        const frame = 'EVENT_LIST'
+
+        expect(setActiveMainFrame(frame)).toEqual({
+            type: SET_ACTIVE_MAIN_FRAME,
+            frame
+        })
+    })
     it('should generate action to set default event date format', function () {
         const value = 'yyyy-dd-mm'
 

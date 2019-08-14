@@ -8,14 +8,17 @@ import {
     selectEvent,
     deselectEvent,
     createAnalysis,
-    updateAnalysis
+    updateAnalysis,
+    setActiveMainFrame
 } from '../../redux/actions'
+
 import { EventItem } from './EventItem/EventItem'
 import EventDialog from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import './EventList.scss'
 import { MarketModel } from 'event-study'
+import PerfectScrollbar from 'perfect-scrollbar'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
 const addEventDialogTitle = 'Add Event'
@@ -25,7 +28,7 @@ let eventDialogPhase = 'add' // add or edit
 let eventToModify
 
 const CREATE_EVENT = 'Create Event'
-const CREATE_EVENT_DESCRIPTION = 'You should create dates of events.'
+const CREATE_EVENT_DESCRIPTION = 'Click the plus sign.'
 
 const unavailableProps = {
     title: CREATE_EVENT,
@@ -94,6 +97,10 @@ export class EventList extends React.Component {
         })
     }
 
+    onAnalysisClick = () => {
+        this.props.setActiveMainFrame('ANALYSIS')
+    }
+
     onEventAddModalClose = () => {
         this.setState({
             isEventDialogActive: false
@@ -139,7 +146,9 @@ export class EventList extends React.Component {
         })
         this.props.deleteEvent(eventToModify.key, this.props.stockKey)
     }
-
+    componentDidMount() {
+        new PerfectScrollbar(this.refs.scrollable)
+    }
     render() {
         return (
             <Fragment>
@@ -151,14 +160,22 @@ export class EventList extends React.Component {
                         {
                             this.renderUnavailableComponent()
                         }
-                        <button type="button"
-                                onClick={this.onPlusClick}
-                                className="mT-nv-50 pos-a r-10 t-25 zi-2 btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning event-dialog-btn">
-                            <i className="ti-plus"/>
-                        </button>
+                        <div className="d-ib pos-a r-10 t-25 zi-2 mT-nv-50">
+                            <button type="button"
+                                    onClick={this.onAnalysisClick}
+                                    className="btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning event-list-analyse-btn d-n@md+">
+                                <i className="ti-stats-up"/>
+                            </button>
+
+                            <button type="button"
+                                    onClick={this.onPlusClick}
+                                    className="btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning event-dialog-btn ml-3">
+                                <i className="ti-plus"/>
+                            </button>
+                        </div>
 
                         {/* Event List */}
-                        <ul className="m-0 p-0" id="event-items">
+                        <ul className="m-0 p-0 pos-r" ref="scrollable" id="event-items">
                             { this.renderEvents() }
                         </ul>
                     </div>
@@ -202,7 +219,8 @@ const actionCreators = {
     selectEvent,
     deselectEvent,
     createAnalysis,
-    updateAnalysis
+    updateAnalysis,
+    setActiveMainFrame
 }
 
 export default connect(mapStateToProps, actionCreators)(EventList)

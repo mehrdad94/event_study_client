@@ -19,6 +19,9 @@ import {
     DELETE_ANALYSIS,
     SHOW_SETTING,
     HIDE_SETTING,
+    SHOW_STOCK_LIST,
+    HIDE_STOCK_LIST,
+    SET_ACTIVE_MAIN_FRAME,
     SET_DEFAULT_EVENT_DATE_FORMAT
 } from '../ActionTypes'
 
@@ -165,6 +168,22 @@ export const showSetting = () => {
 export const hideSetting = () => {
     return {
         type: HIDE_SETTING
+    }
+}
+export const showStockList = () => {
+    return {
+        type: SHOW_STOCK_LIST
+    }
+}
+export const hideStockList = () => {
+    return {
+        type: HIDE_STOCK_LIST
+    }
+}
+export const setActiveMainFrame = frame => {
+    return {
+        type: SET_ACTIVE_MAIN_FRAME,
+        frame
     }
 }
 export const setDefaultEventDateFormat = value => {

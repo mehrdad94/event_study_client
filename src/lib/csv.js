@@ -12,11 +12,11 @@ const readAsText = file => {
 export const csvToJson = file => {
     return new Promise((resolve, reject) => {
         readAsText(file)
-            .then(data => {
-                csv()
-                    .fromString(data.target.result)
-                    .then(resolve)
-                    .catch(reject)
-            }).catch(reject)
+          .then(data => {
+              csv()
+                .fromString(data.target.result)
+                .then(resolve)
+                .catch(reject)
+          }).catch(reject)
     })
 }

@@ -9,6 +9,10 @@ import prop from 'ramda/src/prop'
 import mapObjIndexed from 'ramda/src/mapObjIndexed'
 import map from 'ramda/src/map'
 
+import {
+  setActiveMainFrame
+} from '../../redux/actions'
+
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import { isObjectEmpty, sequence } from '../../lib/helper'
 import { AAR, CAR } from 'event-study'
@@ -16,7 +20,7 @@ import { LineChart } from '../../components/LineChart/LineChart'
 import {COLORS} from "../../lib/colors";
 
 const UNAVAILABLE_TITLE = "Analyse Events"
-const UNAVAILABLE_DESCRIPTION = "You need to create and select at least One event in order to get analysis"
+const UNAVAILABLE_DESCRIPTION = "You need to create and select at least One event in order to get analysis."
 
 const UNAVAILABLE_ANALYSIS_TITLE = "No Analysis Available"
 const UNAVAILABLE_ANALYSIS_DESCRIPTION = "If you want your final analysis hit analyse button"
@@ -148,6 +152,10 @@ export class Analysis extends React.Component {
         new PerfectScrollbar(this.refs.scrollable)
     }
 
+    onEventListClick = () => {
+      this.props.setActiveMainFrame('EVENT_LIST')
+    }
+
     render () {
         const chartsData = this.getChartData()
 
@@ -160,6 +168,14 @@ export class Analysis extends React.Component {
                     {
                         this.renderUnavailableComponent()
                     }
+                    <div className="d-ib pos-a r-10 t-25 zi-2 mT-nv-50">
+                      <button type="button"
+                              onClick={this.onEventListClick}
+                              className="btn cur-p bdrs-50p p-0 w-3r h-3r btn-warning analysis-event-list-btn d-n@md+">
+                        <i className="ti-agenda"/>
+                      </button>
+                    </div>
+
                     <div className="pos-r" ref="scrollable" id="analysis-scroll-container">
                        <div className="bd bgc-white">
                           <div className="layers">
@@ -202,6 +218,8 @@ const mapStateToProps = state => {
     }
 }
 
-const actionCreators = {}
+const actionCreators = {
+  setActiveMainFrame
+}
 
 export default connect(mapStateToProps, actionCreators)(Analysis)

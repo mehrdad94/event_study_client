@@ -1,21 +1,24 @@
 import application from './application'
-import {HIDE_SETTING, SHOW_SETTING} from '../ActionTypes'
+import {
+  HIDE_SETTING,
+  SHOW_SETTING,
+  SHOW_STOCK_LIST,
+  HIDE_STOCK_LIST,
+  SET_ACTIVE_MAIN_FRAME
+} from '../ActionTypes'
 
 describe('application reducer', function () {
   let initialState
 
   beforeEach(() => {
-    initialState = {
-      showSetting: false
-    }
+    initialState = {}
   })
+
   it('should handle initial state', function () {
-    const initialState = undefined
+    const initialState = {}
     const action = {}
 
-    const result = {
-      showSetting: false
-    }
+    const result = {}
 
     expect(application(initialState, action)).toEqual(result)
   })
@@ -40,5 +43,37 @@ describe('application reducer', function () {
       showSetting: false
     }
     expect(application(initialState, action)).toEqual(result)
-  });
+  })
+
+  it('should show stock list', function () {
+    const action = {
+      type: SHOW_STOCK_LIST
+    }
+    const result = {
+      stockListStatus: true
+    }
+    expect(application(initialState, action)).toEqual(result)
+  })
+
+  it('should hide stock list', function () {
+    const action = {
+      type: HIDE_STOCK_LIST
+    }
+    const result = {
+      stockListStatus: false
+    }
+    expect(application(initialState, action)).toEqual(result)
+  })
+
+  it('should set active main frame', function () {
+    const frame = 'ANALYSIS'
+    const action = {
+      type: SET_ACTIVE_MAIN_FRAME,
+      frame
+    }
+    const result = {
+      activeMainFrame: frame
+    }
+    expect(application(initialState, action)).toEqual(result)
+  })
 })

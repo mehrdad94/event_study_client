@@ -1,4 +1,13 @@
-.stocks-list {
+@import '../../styles/spec/settings/breakpoints.scss';
+
+.stock-list {
   float: left!important;
   width: 250px;
+  transition: margin-left .3s ease-in-out;
+}
+
+@media screen and (max-width: $breakpoint-md) {
+  .close-stocks .stock-list{
+    margin-left: -300px;
+  }
 }

@@ -12,6 +12,7 @@ import './App.scss'
 
 const CREATE_STOCK = "Create a Stock"
 const CREATE_STOCK_DESCRIPTION = "First of all you need to create a stock name."
+
 const unavailableProps = {
   title: CREATE_STOCK,
   description: CREATE_STOCK_DESCRIPTION,
@@ -29,9 +30,13 @@ export class App extends React.Component {
     new PerfectScrollbar(this.refs.scrollable)
   }
 
+  hideNoneActiveFrame = frame => this.props.activeMainFrame === frame ? '' : 'd-n@md-'
+
+  showStockList = () => this.props.stockListStatus ? '' : 'close-stocks'
+
   render () {
     return (
-      <div className="h-100p">
+      <div className={"h-100p " + (this.showStockList())}>
         <div className="page-container h-100p">
           <Setting/>
           <Header/>
@@ -40,15 +45,15 @@ export class App extends React.Component {
               <div className="container-fluid h-100p pos-r" ref="scrollable">
                 <StocksList/>
 
-                <div className="stocks-list-wrapper pos-r h-100p">
+                <div className="main-wrapper pos-r h-100p">
                   {
                     this.renderUnavailableComponent()
                   }
                   <div className="row h-100p">
-                    <div className="col-md-4 h-100p">
+                    <div className={"col-lg-4 col-md-12 h-100p " + this.hideNoneActiveFrame('EVENT_LIST')} >
                       <EventList/>
                     </div>
-                    <div className="col-md-8 h-100p">
+                    <div className={"col-lg-8 col-md-12 h-100p " + this.hideNoneActiveFrame('ANALYSIS')} >
                       <Analysis/>
                     </div>
                   </div>
@@ -69,7 +74,9 @@ export class App extends React.Component {
 const mapStateToProps = state => {
   return {
     stocks: state.stocks.stockList,
-    activeStock: state.stocks.activeStock
+    activeStock: state.stocks.activeStock,
+    stockListStatus: state.application.stockListStatus,
+    activeMainFrame: state.application.activeMainFrame
   }
 }
 
