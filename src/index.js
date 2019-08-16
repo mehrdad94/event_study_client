@@ -4,16 +4,22 @@ import 'bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'
-import store from './redux/store'
+import { store, persistor } from './redux/store'
+import { Loader } from './components/Loader/Loader'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import './styles/index.scss'
 
+const ActiveLoader = () => <Loader active={true}/>
+
 ReactDOM.render(
-    <Provider store={store}>
-        <App/>
-    </Provider>
-    , document.getElementById('root'))
+  <Provider store={store}>
+    <PersistGate loading={<ActiveLoader/>} persistor={persistor}>
+      <App />
+    </PersistGate>
+  </Provider>
+  , document.getElementById('root'))
 
 serviceWorker.register()

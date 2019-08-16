@@ -151,11 +151,11 @@ export const updateAnalysis = (analysis, stockKey, eventKey) => {
         }
     }
 }
-export const deleteAnalysis = (key, stockKey) => {
+export const deleteAnalysis = (eventKey, stockKey) => {
     return {
         type: DELETE_ANALYSIS,
         payload: {
-            key,
+            eventKey,
             stockKey
         }
     }

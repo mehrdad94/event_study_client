@@ -5,7 +5,7 @@ import {
     UPDATE_EVENT,
     DELETE_EVENT,
     SELECT_EVENT,
-    DESELECT_EVENT
+    DESELECT_EVENT, DELETE_STOCK
 } from '../ActionTypes'
 
 describe('events reducer', function () {
@@ -162,5 +162,27 @@ describe('events reducer', function () {
         }
 
         expect(events(initialState, action)).toEqual(result)
-    });
-});
+    })
+
+    it('should delete whole events stock children', function () {
+        const key = '1234'
+
+        const initialState = {
+            events: {
+                [key]: {}
+            },
+            activeEvents: {
+                [key]: {}
+            }
+        }
+
+        const result = {
+            events: {},
+            activeEvents: {}
+        }
+
+        const action = { type: DELETE_STOCK, key }
+
+        expect(events(initialState, action)).toEqual(result)
+    })
+})

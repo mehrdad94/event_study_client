@@ -5,7 +5,7 @@ import {
     UPDATE_EVENT,
     DELETE_EVENT,
     SELECT_EVENT,
-    DESELECT_EVENT
+    DESELECT_EVENT, DELETE_STOCK
 } from '../ActionTypes'
 
 const initialState = {
@@ -63,6 +63,16 @@ export default function events (state = initialState, action) {
             const activeEvents = update(state.activeEvents, { [action.payload.stockKey ]: { $unset: [action.payload.event.key] } })
             return {
                 ...state,
+                activeEvents
+            }
+        }
+        case DELETE_STOCK: {
+            const events = update(state.events, { $unset: [action.key] })
+            const activeEvents = update(state.activeEvents, { $unset: [action.key] })
+
+            return {
+                ...state,
+                events,
                 activeEvents
             }
         }

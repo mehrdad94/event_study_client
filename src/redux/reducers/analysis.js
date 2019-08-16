@@ -1,7 +1,7 @@
 import {
-    CREATE_ANALYSIS,
-    UPDATE_ANALYSIS,
-    DELETE_ANALYSIS
+  CREATE_ANALYSIS,
+  UPDATE_ANALYSIS,
+  DELETE_ANALYSIS, DELETE_STOCK, DELETE_EVENT
 } from '../ActionTypes'
 import update from "immutability-helper";
 
@@ -45,6 +45,25 @@ export default function analysis (state = initialState, action) {
             ...state.analysis,
             [action.payload.stockKey]: analysis
           }
+        }
+      }
+      case DELETE_EVENT: {
+        const analysis = update(state.analysis[action.payload.stockKey], { $unset: [action.payload.key] })
+
+        return {
+          ...state,
+          analysis: {
+            ...state.analysis,
+            [action.payload.stockKey]: analysis
+          }
+        }
+      }
+      case DELETE_STOCK: {
+        const analysis = update(state.analysis, { $unset: [action.key] })
+
+        return {
+          ...state,
+          analysis
         }
       }
       default:

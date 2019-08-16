@@ -57,6 +57,8 @@ export class StocksList extends React.Component {
             showDeleteConfirmDialog: false
         })
         this.props.deleteStock(stockKeyToDelete)
+        // delete analysis
+        // delete events
     }
 
     onKeyDown = event => {

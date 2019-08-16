@@ -300,17 +300,17 @@ describe('should test actions', function () {
     })
 
     it('should delete an analysis', function () {
-        const key = 'event key to delete'
+        const eventKey = 'event key to delete'
         const stockKey = '123'
         const result = {
             type: DELETE_ANALYSIS,
             payload: {
-                key,
+                eventKey,
                 stockKey
             }
         }
 
-        expect(deleteAnalysis(key, stockKey)).toEqual(result)
+        expect(deleteAnalysis(eventKey, stockKey)).toEqual(result)
     })
 
     it('should show setting', function () {

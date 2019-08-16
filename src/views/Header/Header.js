@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { downloadJsonText } from '../../lib/helper'
-import store from '../../redux/store'
+import { store } from '../../redux/store'
 import { showSetting, showStockList, hideStockList } from '../../redux/actions'
 
 const EXPORT_FILE_NAME = 'event study state'

@@ -9,7 +9,8 @@ import {
     deselectEvent,
     createAnalysis,
     updateAnalysis,
-    setActiveMainFrame
+    setActiveMainFrame,
+    deleteAnalysis
 } from '../../redux/actions'
 
 import { EventItem } from './EventItem/EventItem'
@@ -129,6 +130,10 @@ export class EventList extends React.Component {
 
         const statsResult = MarketModel({ calendar })[0]
 
+        // delete market and stock data for performance
+        delete data['market']
+        delete data['stock']
+
         if (eventDialogPhase === 'add') {
             data.key = uuid()
             this.props.createEvent(data, this.props.stockKey)
@@ -220,7 +225,8 @@ const actionCreators = {
     deselectEvent,
     createAnalysis,
     updateAnalysis,
-    setActiveMainFrame
+    setActiveMainFrame,
+    deleteAnalysis
 }
 
 export default connect(mapStateToProps, actionCreators)(EventList)
