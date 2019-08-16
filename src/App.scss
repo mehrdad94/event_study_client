@@ -10,3 +10,13 @@
     margin-left: 0;
   }
 }
+
+@media screen and (max-width: $breakpoint-xs) {
+  .main-wrapper {
+    display: none;
+  }
+
+  .close-stocks .main-wrapper {
+    display: block;
+  }
+}

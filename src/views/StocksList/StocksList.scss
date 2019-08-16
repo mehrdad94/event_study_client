@@ -7,7 +7,18 @@
 }
 
 @media screen and (max-width: $breakpoint-md) {
-  .close-stocks .stock-list{
+  .close-stocks .stock-list {
     margin-left: -300px;
+  }
+}
+
+@media screen and (max-width: $breakpoint-xs) {
+  .stock-list {
+    float: none!important;
+    width: auto;
+  }
+
+  .close-stocks .stock-list {
+    display: none;
   }
 }
