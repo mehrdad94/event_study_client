@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import $ from 'jquery'
 import FormInput from '../../../components/FormInput/FormInput'
+import FormSelect from '../../../components/FormSelect/FormSelect'
 import FormPicker from '../../../components/FormDatepicker/FormDatepicker'
 import FormFile from '../../../components/FormFile/FormFile'
 
@@ -15,14 +16,22 @@ import {
 
 let jqueryModalRef
 
+const toSelectInput = value => ({ label: value, value })
+const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly', 'Monthly'].map(toSelectInput)
+
 const genFormValues = props => {
     const {
         title = '',
         date = '',
         stock = {},
+        stockSymbol = '',
+        stockTimeFrame = 'Daily',
         market = {},
+        marketSymbol = '',
+        marketTimeFrame = 'Daily',
         dateColumn = '',
         operationColumn = '',
+        alphavantageToken = '',
         T0T1 = '',
         T1E = '',
         ET2 = '',
@@ -33,9 +42,14 @@ const genFormValues = props => {
         title,
         date,
         stock,
+        stockSymbol,
+        stockTimeFrame,
         market,
+        marketSymbol,
+        marketTimeFrame,
         dateColumn,
         operationColumn,
+        alphavantageToken,
         T0T1,
         T1E,
         ET2,
@@ -46,11 +60,20 @@ const genFormValues = props => {
 const genState = props => {
     const {
         defaultEventDateFormat = '',
+        analysisModel = true, // true means Market Model
+        useExternalSource = false,
+        stock = '', // stock name
+        market = '', // market name
         invalidFeedBacks = {
             title: '',
             date: '',
             stock: '',
+            stockSymbol: '',
+            stockTimeFrame: '',
             market: '',
+            marketSymbol: '',
+            marketTimeFrame: '',
+            alphavantageToken: '',
             dateColumn: '',
             operationColumn: '',
             T0T1: '',
@@ -62,6 +85,10 @@ const genState = props => {
 
     return {
         defaultEventDateFormat,
+        analysisModel,
+        useExternalSource,
+        stock,
+        market,
         invalidFeedBacks
     }
 }
@@ -82,6 +109,14 @@ export class EventDialog extends React.Component {
         this.formValues[type] = event.target.value
     }
 
+    handleCheckboxChange = (type, event) => {
+        this.setState({
+            [type]: event.target.checked
+        })
+    }
+    analysisCheckBoxClass = (checked) => {
+        return checked ? 'col-sm-5' : 'col-sm-10'
+    }
     onFileChange = (type, e) => {
         const file = e.target.files[0]
 
@@ -90,6 +125,9 @@ export class EventDialog extends React.Component {
         csvToJson(file)
           .then(json => {
               this.formValues[type] = json
+              this.setState({
+                  [type]: file.name
+              })
           })
     }
 
@@ -159,8 +197,11 @@ export class EventDialog extends React.Component {
             } else {
                 this.formValues = genFormValues({})
                 this.setState(genState({}))
-                document.getElementById('eventDialogStockPriceInput').value = ''
-                document.getElementById('eventDialogMarketPriceInput').value = ''
+                const stockId = document.getElementById('eventDialogStockPriceInput')
+                const marketId = document.getElementById('eventDialogMarketPriceInput')
+
+                if (stockId) stockId.value = ''
+                if (marketId) marketId.value = ''
             }
         }
     }
@@ -199,20 +240,121 @@ export class EventDialog extends React.Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <FormFile accept={ '.csv' }
-                                              identifier={ 'eventDialogStockPriceInput' }
-                                              inputLabel={ 'Stock prices' }
-                                              invalidFeedback={ this.state.invalidFeedBacks.stock }
-                                              onChange={e => this.onFileChange('stock', e)}/>
+                                    <div className="custom-control custom-checkbox">
+                                        <input type="checkbox"
+                                               className="custom-control-input"
+                                               id="toggleUseExternalResource"
+                                               checked={ this.state.useExternalSource }
+                                               onChange={ event => this.handleCheckboxChange('useExternalSource', event) }/>
+                                        <label className="custom-control-label" htmlFor="toggleUseExternalResource">Use external resources</label>
+                                    </div>
                                 </div>
 
-                                <div className="form-group">
-                                    <FormFile accept={ '.csv' }
-                                              identifier={ 'eventDialogMarketPriceInput' }
-                                              inputLabel={ 'Market prices' }
-                                              invalidFeedback={ this.state.invalidFeedBacks.market }
-                                              onChange={e => this.onFileChange('market', e)}/>
+                                <div className="form-row">
+                                    {
+                                        this.state.useExternalSource ? (
+                                          <Fragment>
+                                              <div className="col-sm-2">
+                                                  <div className="custom-control custom-checkbox">
+                                                      <input type="checkbox"
+                                                             disabled
+                                                             className="custom-control-input"
+                                                             id="toggleMarketModel"
+                                                             checked={ this.state.analysisModel }
+                                                             onChange={ e => this.handleCheckboxChange('analysisModel', e) }/>
+                                                      <label className="custom-control-label" htmlFor="toggleMarketModel">MM</label>
+                                                  </div>
+                                              </div>
+
+                                              <div className={"form-group " + this.analysisCheckBoxClass(this.state.analysisModel)}>
+                                                  <div>
+                                                      <FormInput
+                                                        inputLabel={ 'Stock Symbol' }
+                                                        inputValue={ this.formValues.stockSymbol }
+                                                        invalidFeedback={ this.state.invalidFeedBacks.stockSymbol }
+                                                        onChange={ event => this.handleChange('stockSymbol', event) }/>
+
+                                                      <div className="form-group"/>
+
+                                                      <FormSelect
+                                                        selectLabel={ 'Stock Time Frame' }
+                                                        selectValue={ this.formValues.stockTimeFrame }
+                                                        selectOptions={ timeFrames }
+                                                        invalidFeedback={ this.state.invalidFeedBacks.stockTimeFrame }
+                                                        onChange={ event => this.handleChange('stockTimeFrame', event) }/>
+                                                  </div>
+                                              </div>
+
+                                              {
+                                                  this.state.analysisModel ? (
+                                                    <div className="form-group col-sm-5">
+                                                        <FormInput
+                                                          inputLabel={ 'Market Symbol' }
+                                                          inputValue={ this.formValues.marketSymbol }
+                                                          invalidFeedback={ this.state.invalidFeedBacks.marketSymbol }
+                                                          onChange={ event => this.handleChange('marketSymbol', event) }/>
+
+                                                        <div className="form-group"/>
+
+                                                        <FormSelect
+                                                          selectLabel={ 'Market Time Frame' }
+                                                          selectValue={ this.formValues.marketTimeFrame }
+                                                          selectOptions={ timeFrames }
+                                                          invalidFeedback={ this.state.invalidFeedBacks.marketTimeFrame }
+                                                          onChange={ event => this.handleChange('marketTimeFrame', event) }/>
+                                                    </div>
+                                                  ) : null
+                                              }
+                                          </Fragment>
+                                        ) : (
+                                          <Fragment>
+                                              <div className="col-sm-2">
+                                                  <div className="custom-control custom-checkbox mt-2">
+                                                      <input type="checkbox"
+                                                             disabled
+                                                             className="custom-control-input"
+                                                             id="toggleMarketModel"
+                                                             checked={ this.state.analysisModel }
+                                                             onChange={ e => this.handleCheckboxChange('analysisModel', e) }/>
+                                                      <label className="custom-control-label" htmlFor="toggleMarketModel">MM</label>
+                                                  </div>
+                                              </div>
+
+                                              <div className={"form-group " + this.analysisCheckBoxClass(this.state.analysisModel)}>
+                                                  <FormFile accept={ '.csv' }
+                                                            identifier={ 'eventDialogStockPriceInput' }
+                                                            inputLabel={ this.state.stock || 'Stock prices' }
+                                                            invalidFeedback={ this.state.invalidFeedBacks.stock }
+                                                            onChange={e => this.onFileChange('stock', e)}/>
+                                              </div>
+
+                                              {
+                                                  this.state.analysisModel ? (
+                                                    <div className="form-group col-sm-5">
+                                                        <FormFile accept={ '.csv' }
+                                                                  identifier={ 'eventDialogMarketPriceInput' }
+                                                                  inputLabel={ this.state.market || 'Market prices' }
+                                                                  invalidFeedback={ this.state.invalidFeedBacks.market }
+                                                                  onChange={e => this.onFileChange('market', e)}/>
+                                                    </div>
+                                                  ) : null
+                                              }
+                                          </Fragment>
+                                        )
+                                    }
                                 </div>
+
+                                {
+                                    this.state.useExternalSource ? (
+                                      <div className="form-group">
+                                          <FormInput
+                                            inputLabel={ 'alphavantage Token' }
+                                            inputValue={ this.formValues.alphavantageToken }
+                                            invalidFeedback={ this.state.invalidFeedBacks.alphavantageToken }
+                                            onChange={ event => this.handleChange('alphavantageToken', event) }/>
+                                      </div>
+                                    ) : null
+                                }
 
                                 <div className="form-group">
                                     <FormInput
@@ -301,6 +443,7 @@ const mapStateToProps = state => {
     return {
         dateColumn: state.setting.dateColumn,
         operationColumn: state.setting.operationColumn,
+        alphavantageToken: state.setting.alphavantageToken,
         defaultEventDateFormat: state.setting.defaultEventDateFormat,
         T0T1: state.setting.T0T1,
         T1E: state.setting.T1E,

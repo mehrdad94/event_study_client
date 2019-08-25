@@ -2,6 +2,7 @@ import setting from './setting'
 import {
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
+    SET_ALPHAVANTAGE_TOKEN,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
@@ -30,6 +31,17 @@ describe('should test setting reducer', function () {
         expect(setting(initialState, action)).toEqual({ operationColumn })
     })
 
+    it('should set alphavantage token', function () {
+        const initialState = {}
+
+        const token = 'token'
+
+        const action = { type: SET_ALPHAVANTAGE_TOKEN, token }
+
+        expect(setting(initialState, action)).toEqual({
+            alphavantageToken: token
+        })
+    });
     it('should set T0T1', function () {
         const initialState = {}
 

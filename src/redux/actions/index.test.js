@@ -5,6 +5,7 @@ import {
     SET_T2T3,
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
+    SET_ALPHAVANTAGE_TOKEN,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
@@ -32,6 +33,7 @@ import {
     setT2T3,
     setDateColumn,
     setOperationColumn,
+    setAlphavantageToken,
     createEvent,
     updateEvent,
     deleteEvent,
@@ -117,6 +119,17 @@ describe('should test actions', function () {
         }
 
         expect(setOperationColumn(operationColumn)).toEqual(result)
+    })
+
+    it('should set alphavantage token', function () {
+        const token = 'token'
+
+        const result = {
+            type: SET_ALPHAVANTAGE_TOKEN,
+            token
+        }
+
+        expect(setAlphavantageToken(token)).toEqual(result)
     })
 
     it('should create an action to create an event', function () {

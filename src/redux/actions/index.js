@@ -5,6 +5,7 @@ import {
     SET_T2T3,
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
+    SET_ALPHAVANTAGE_TOKEN,
     CREATE_EVENT,
     UPDATE_EVENT,
     DELETE_EVENT,
@@ -61,7 +62,12 @@ export const setOperationColumn = operationColumn => {
         operationColumn
     }
 }
-
+export const setAlphavantageToken = token => {
+    return {
+        type: SET_ALPHAVANTAGE_TOKEN,
+        token
+    }
+}
 export const createEvent = (event, stockKey) => {
     return {
         type: CREATE_EVENT,

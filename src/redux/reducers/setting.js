@@ -1,6 +1,7 @@
 import {
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
+    SET_ALPHAVANTAGE_TOKEN,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
@@ -10,6 +11,7 @@ import {
 
 const dateColumn = 'Date'
 const operationColumn = 'Close'
+const alphavantageToken = ''
 const T0T1 = 40
 const T1E = 7
 const ET2 = 7
@@ -19,6 +21,7 @@ const defaultEventDateFormat = 'yyyy-mm-dd'
 const initialState = {
     dateColumn,
     operationColumn,
+    alphavantageToken,
     T0T1,
     T1E,
     ET2,
@@ -37,6 +40,11 @@ export default function setting (state = initialState, action) {
             return {
                 ...state,
                 operationColumn: action.operationColumn
+            }
+        case SET_ALPHAVANTAGE_TOKEN:
+            return {
+                ...state,
+                alphavantageToken: action.token
             }
         case SET_T0T1:
             return {

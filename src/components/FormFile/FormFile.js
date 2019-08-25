@@ -8,17 +8,14 @@ export class FormFile extends React.Component {
 
   render () {
     return (
-      <Fragment>
-        <label className="fw-500"
-               htmlFor={this.props.identifier}>{this.props.inputLabel}</label>
-
+      <div className="custom-file">
         <input type="file"
                accept={ this.props.accept }
                onClick={e => { e.target.value = null }}
                onChange={this.handleChange}
-               className={"form-control-file bdc-grey-200" + (this.props.invalidFeedback ? ' is-invalid' : '') }
+               className={"custom-file-input form-control-file bdc-grey-200" + (this.props.invalidFeedback ? ' is-invalid' : '') }
                id={this.props.identifier}/>
-
+        <label className="fw-500 custom-file-label" htmlFor={this.props.identifier}>{this.props.inputLabel}</label>
         {
           this.props.invalidFeedback ? (
             <div className="invalid-feedback">
@@ -26,7 +23,7 @@ export class FormFile extends React.Component {
             </div>
           ) : null
         }
-      </Fragment>
+      </div>
     )
   }
 }
