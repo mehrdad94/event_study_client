@@ -1,17 +1,21 @@
-import React, {Fragment} from 'react'
+import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import $ from 'jquery'
+import is from 'ramda/src/is'
 import FormInput from '../../../components/FormInput/FormInput'
 import FormSelect from '../../../components/FormSelect/FormSelect'
 import FormPicker from '../../../components/FormDatepicker/FormDatepicker'
 import FormFile from '../../../components/FormFile/FormFile'
 
 import { csvToJson } from '../../../lib/csv'
+import { getStockData } from '../../../lib/alphavantageApi'
+
 import {
   validateTimelineKey,
   validateColumnName,
-  validatePrices
+  validatePrices,
+  MarketModel
 } from 'event-study'
 
 let jqueryModalRef
@@ -21,12 +25,13 @@ const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly'
 
 const genState = props => {
   const {
+    loading = false,
     title = '',
     date = '',
-    stock = {},
+    stock = [],
     stockSymbol = '',
     stockTimeFrame = 'Daily',
-    market = {},
+    market = [],
     marketSymbol = '',
     marketTimeFrame = 'Daily',
     dateColumn = '',
@@ -56,11 +61,13 @@ const genState = props => {
       T0T1: '',
       T1E: '',
       ET2: '',
-      T2T3: ''
+      T2T3: '',
+      globalError: ''
     }
   } = props
 
   return {
+    loading,
     title,
     date,
     stock,
@@ -89,7 +96,11 @@ export class EventDialog extends React.Component {
   state = genState(this.props)
 
   static showModal () {
-    jqueryModalRef.modal('show')
+    jqueryModalRef.modal({
+      keyboard: false,
+      backdrop: 'static',
+      show: true
+    })
   }
 
   static hideModal () {
@@ -126,7 +137,6 @@ export class EventDialog extends React.Component {
   validateSharedInputs = () => {
     const isTitleInvalid = validateColumnName(this.state.title) || ''
     const isValidDate = validateColumnName(this.state.date) || ''
-    const isAlphavantageTokenValid = validateColumnName(this.state.alphavantageToken) || ''
     const isDateColumnInvalid = validateColumnName(this.state.dateColumn) || ''
     const isOperationColumnInvalid = validateColumnName(this.state.operationColumn) || ''
     const isT0T1Invalid = validateTimelineKey(this.state.T0T1) || ''
@@ -137,7 +147,6 @@ export class EventDialog extends React.Component {
     return [
       ['title', isTitleInvalid],
       ['date', isValidDate],
-      ['alphavantageToken', isAlphavantageTokenValid],
       ['dateColumn', isDateColumnInvalid],
       ['operationColumn', isOperationColumnInvalid],
       ['T0T1', isT0T1Invalid],
@@ -147,7 +156,7 @@ export class EventDialog extends React.Component {
     ].filter(item => item[1])
   }
 
-  validateMarketModelInternalSourceInputs = () => {
+  validateMarketModelSources = () => {
     const isStockPriceInvalid = validatePrices(this.state.stock, this.state.dateColumn, this.state.operationColumn) || ''
     const isMarketPriceInvalid = validatePrices(this.state.market, this.state.dateColumn, this.state.operationColumn) || ''
 
@@ -162,36 +171,130 @@ export class EventDialog extends React.Component {
     const isStockTimeFrameValid = validateColumnName(this.state.stockTimeFrame) || ''
     const isMarketSymbolValid = validateColumnName(this.state.marketSymbol) || ''
     const isMarketTimeFrameValid = validateColumnName(this.state.marketTimeFrame) || ''
+    const isAlphavantageTokenValid = validateColumnName(this.state.alphavantageToken) || ''
 
     return [
       ['stockSymbol', isStockSymbolValid],
       ['stockTimeFrame', isStockTimeFrameValid],
+      ['alphavantageToken', isAlphavantageTokenValid],
       ['marketSymbol', isMarketSymbolValid],
       ['marketTimeFrame', isMarketTimeFrameValid]
     ].filter(item => item[1])
   }
-  onAccept = () => {
-    // validate
+
+  validateAll = () => {
     const areSharedInputsValid = this.validateSharedInputs()
 
-    const areMarketModelInputsValid = this.state.useExternalSource ? this.validateMarketModelExternalSourceInputs() : this.validateMarketModelInternalSourceInputs()
+    const areMarketModelInputsValid = this.state.useExternalSource ? this.validateMarketModelExternalSourceInputs() : this.validateMarketModelSources()
 
     const addError = (invalidFeedBacks, feedback) => {
-      invalidFeedBacks[feedback[0]] = feedback[1]
+      invalidFeedBacks[feedback[0]] = feedback[1].toString()
       return invalidFeedBacks
     }
 
     if (areSharedInputsValid.length || areMarketModelInputsValid.length) {
-      const invalidFeedBacks = areMarketModelInputsValid.reduce(addError, areSharedInputsValid.reduce(addError, {}))
+      return areMarketModelInputsValid.reduce(addError, areSharedInputsValid.reduce(addError, {}))
+    } else return null
+  }
 
-      this.setState({ invalidFeedBacks })
+  getStockDataFromExternalResource = () => {
+    return new Promise((resolve, reject) => {
+      const {
+        stockSymbol,
+        stockTimeFrame,
+        marketSymbol,
+        marketTimeFrame,
+        alphavantageToken
+      } = this.state
 
+      this.setState({ loading: true })
+      Promise.all([
+        getStockData(stockSymbol, stockTimeFrame, alphavantageToken),
+        getStockData(marketSymbol, marketTimeFrame, alphavantageToken)
+      ]).then(result => {
+        this.setState({
+          stock: result[0],
+          market: result[1],
+          loading: false
+        })
+        resolve()
+      }).catch(reject)
+    })
+  }
+  onAfterValidate = () => {
+    const { date, title, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = this.state
+
+    const timeline = { T0T1, T1E, ET2, T2T3 }
+
+    const calendar = [{
+      date,
+      stock,
+      market,
+      timeline,
+      dateColumn,
+      operationColumn
+    }]
+
+    const statsResult = MarketModel({ calendar })[0]
+
+    if (!is(Object, statsResult) || statsResult['errors']) {
+      this.setState({
+        invalidFeedBacks: {
+          globalError: 'Invalid Data!'
+        }
+      })
       return
     }
 
     EventDialog.hideModal()
 
-    this.props.onAccept(Object.assign({}, this.state))
+    this.props.onAccept({
+      eventData: {
+        date, title, T0T1, T1E, ET2, T2T3, dateColumn, operationColumn
+      },
+      statsResult
+    })
+  }
+  onAccept = () => {
+    const validationResult = this.validateAll()
+
+    if (validationResult) {
+      this.setState({
+        invalidFeedBacks: validationResult
+      })
+      return
+    }
+
+    if (this.state.useExternalSource) {
+      this.getStockDataFromExternalResource()
+        .then(() => {
+          const validationResult = this.validateAll()
+
+          if (validationResult) {
+            this.setState({
+              invalidFeedBacks: validationResult,
+              loading: false
+            })
+            return
+          }
+
+          this.onAfterValidate()
+        })
+        .catch(error => {
+          if (typeof error === 'object') {
+            error = JSON.stringify(error)
+          }
+
+          this.setState({
+            loading: false,
+            invalidFeedBacks: {
+              globalError: error
+            }
+          })
+        })
+    } else {
+      this.onAfterValidate()
+    }
   }
 
   componentDidMount () {
@@ -234,10 +337,19 @@ export class EventDialog extends React.Component {
       <div className="modal fade" ref='modal'>
         <div className="modal-dialog" id="event-dialog-modal" role="document">
           <div className="modal-content">
-            <div className="bd p-15">
-              <h5 className="m-0 dialog-title">{this.props.dialogTitle}</h5>
+            <div className="bd p-15 modal-header">
+              <h5 className="m-0 dialog-title">
+                {this.props.dialogTitle}
+              </h5>
+              <button type="button" className="close float-right" data-dismiss="modal" aria-label="Close" disabled={this.state.loading}>
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
             <div className="modal-body">
+              {
+                this.state.invalidFeedBacks.globalError ? (<div className="alert alert-danger" role="alert">{this.state.invalidFeedBacks.globalError}!</div>) : null
+              }
+
               <form>
                 <div className="form-group">
                   <FormInput
@@ -423,8 +535,21 @@ export class EventDialog extends React.Component {
               </form>
             </div>
             <div className="text-right modal-footer">
-              <button type="button" className="btn" data-dismiss="modal">Close</button>
-              <button className="btn btn-primary cur-p" onClick={this.onAccept}>Done</button>
+              <button type="button" className="btn" data-dismiss="modal" disabled={this.state.loading}>Close</button>
+
+              <button className="btn btn-primary"
+                      type="button"
+                      onClick={this.onAccept}
+                      disabled={this.state.loading}>
+                { this.state.loading ? (
+                  <Fragment>
+                    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"/>
+                    downloading, might take a while...
+                  </Fragment>
+                ) : (
+                  <span>Done</span>
+                ) }
+              </button>
             </div>
           </div>
         </div>

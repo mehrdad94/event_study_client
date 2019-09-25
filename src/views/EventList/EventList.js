@@ -18,7 +18,6 @@ import EventDialog from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import { Unavailable } from '../../components/Unavailable/Unavailable'
 import './EventList.scss'
-import { MarketModel } from 'event-study'
 import PerfectScrollbar from 'perfect-scrollbar'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'
@@ -85,6 +84,7 @@ export class EventList extends React.Component {
                      onItemClick={() => this.onEventClick(item)}
                      isActive={Boolean(this.props.activeEvents[item.key])}
                      key={item.key}
+                     eventType={this.props.analysis[item.key].newsType}
                      {...item}/>)
         )
     }
@@ -114,34 +114,15 @@ export class EventList extends React.Component {
         })
     }
 
-    onEventDialogAccept = data => {
-        const { date, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = data
-
-        const timeline = { T0T1, T1E, ET2, T2T3 }
-
-        const calendar = [{
-            date,
-            stock,
-            market,
-            timeline,
-            dateColumn,
-            operationColumn
-        }]
-
-        const statsResult = MarketModel({ calendar })[0]
-
-        // delete market and stock data for performance
-        delete data['market']
-        delete data['stock']
-
+    onEventDialogAccept = ({ eventData, statsResult }) => {
         if (eventDialogPhase === 'add') {
-            data.key = uuid()
-            this.props.createEvent(data, this.props.stockKey)
-            this.props.createAnalysis(statsResult, this.props.stockKey, data.key)
+            eventData.key = uuid()
+            this.props.createAnalysis(statsResult, this.props.stockKey, eventData.key)
+            this.props.createEvent(eventData, this.props.stockKey)
         } else {
-            data.key = eventToModify.key
-            this.props.updateEvent(data, this.props.stockKey)
-            this.props.updateAnalysis(statsResult, this.props.stockKey, data.key)
+            eventData.key = eventToModify.key
+            this.props.updateEvent(eventData, this.props.stockKey)
+            this.props.updateAnalysis(statsResult, this.props.stockKey, eventData.key)
         }
     }
 
@@ -203,17 +184,20 @@ export class EventList extends React.Component {
         )
     }
 }
-
 // selectors
+const defaultAnalysisList = []
+
 const getStockKey = state => state.stocks.activeStock.key
 const getEventList = state => state.events.events[state.stocks.activeStock.key]
 const getActiveEvents = state => state.events.activeEvents[state.stocks.activeStock.key]
+const getAnalysisList = state => state.analysis.analysis[state.stocks.activeStock.key] || defaultAnalysisList
 
 const mapStateToProps = state => {
     return {
         stockKey: getStockKey(state),
         eventList: getEventList(state),
-        activeEvents: getActiveEvents(state)
+        activeEvents: getActiveEvents(state),
+        analysis: getAnalysisList(state)
     }
 }
 

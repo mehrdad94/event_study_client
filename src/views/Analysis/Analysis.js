@@ -110,7 +110,7 @@ export class Analysis extends React.Component {
         const events = this.props.activeEvents
 
         if (events.length > 1) {
-            const analysis = events.map(event => this.props.analysis[event.key])
+            const analysis = events.map(event => this.props.analysis[event.key]).filter(item => item)
 
             if (analysis.length <= 1) return result
 

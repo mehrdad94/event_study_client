@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import './EventItem.scss'
 
 export class EventItem extends React.Component {
     onDeleteClick = e => {
@@ -16,11 +17,18 @@ export class EventItem extends React.Component {
         this.props.onItemClick(e)
     }
 
+    getEventTypeClassName = type => {
+        if (type === 1) return 'event-item-good'
+        else if (type === 0) return 'event-item-neutral'
+        else return 'event-item-bad'
+    }
     render() {
         const { title, date } = this.props
         const activeEventClass = this.props.isActive ? 'bgc-grey-50' : ''
+        const eventTypeClass = this.getEventTypeClassName(this.props.eventType)
+
         return (
-            <li onClick={this.onItemClick} className={`bdB peers ai-c bgcH-grey-50 jc-sb fxw-nw cur-p item ${activeEventClass}`}>
+            <li onClick={this.onItemClick} className={`bdB peers ai-c bgcH-grey-50 jc-sb fxw-nw cur-p item ${activeEventClass} ${eventTypeClass}`}>
                 <a className="td-n p-20 peers fxw-nw mR-20 peer-greed c-grey-900">
                     <div className="peer">
                         <span className="fw-600 eventItemTitle">{title}</span>
@@ -53,6 +61,7 @@ export class EventItem extends React.Component {
 EventItem.propTypes = {
     title: PropTypes.string,
     date: PropTypes.string,
+    eventType: PropTypes.number,
     description: PropTypes.string,
     onDeleteClick: PropTypes.func,
     onEditClick: PropTypes.func,
@@ -63,6 +72,7 @@ EventItem.propTypes = {
 EventItem.defaultProps = {
     title: '',
     date: '',
+    eventType: 0,
     description: '...',
     onDeleteClick: () => {},
     onEditClick: () => {},

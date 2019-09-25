@@ -157,7 +157,6 @@ export class Setting extends React.Component {
     // validate
     const isDateColumnInvalid = validateColumnName(this.formValues.dateColumn) || ''
     const isOperationColumnInvalid = validateColumnName(this.formValues.operationColumn) || ''
-    const isAlphavantageToken = validateColumnName(this.formValues.alphavantageToken) || ''
     const isT0T1Invalid = validateTimelineKey(this.formValues.T0T1) || ''
     const isT1EInvalid = validateTimelineKey(this.formValues.T1E) || ''
     const isET2Invalid = validateTimelineKey(this.formValues.ET2) || ''
@@ -167,7 +166,6 @@ export class Setting extends React.Component {
     // if has error
     if (isDateColumnInvalid ||
         isOperationColumnInvalid ||
-        isAlphavantageToken ||
         isT0T1Invalid ||
         isT1EInvalid ||
         isET2Invalid ||
@@ -178,7 +176,6 @@ export class Setting extends React.Component {
         invalidFeedBacks: {
           dateColumn: isDateColumnInvalid.toString(),
           operationColumn: isOperationColumnInvalid.toString(),
-          isAlphavantageToken: isAlphavantageToken.toString(),
           T0T1: isT0T1Invalid.toString(),
           T1E: isT1EInvalid.toString(),
           ET2: isET2Invalid.toString(),
@@ -192,10 +189,10 @@ export class Setting extends React.Component {
     this.props.setDateColumn(this.formValues.dateColumn)
     this.props.setOperationColumn(this.formValues.operationColumn)
     this.props.setAlphavantageToken(this.formValues.alphavantageToken)
-    this.props.setT0T1(this.formValues.T0T1)
-    this.props.setT1E(this.formValues.T1E)
-    this.props.setET2(this.formValues.ET2)
-    this.props.setT2T3(this.formValues.T2T3)
+    this.props.setT0T1(+this.formValues.T0T1)
+    this.props.setT1E(+this.formValues.T1E)
+    this.props.setET2(+this.formValues.ET2)
+    this.props.setT2T3(+this.formValues.T2T3)
     this.props.setDefaultEventDateFormat(this.formValues.defaultEventDateFormat)
 
     this.props.hideSetting()
