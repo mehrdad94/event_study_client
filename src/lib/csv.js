@@ -1,6 +1,6 @@
 const csv = require('csvtojson/v2')
 
-const readAsText = file => {
+export const readAsText = file => {
     return new Promise((resolve, reject) => {
         const fileReader = new FileReader()
         fileReader.onload = resolve
