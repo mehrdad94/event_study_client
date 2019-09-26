@@ -23,7 +23,7 @@ export class EventItem extends React.Component {
         else return 'event-item-bad'
     }
     render() {
-        const { title, date } = this.props
+        const { title, date, T0T1, T1E, ET2, T2T3 } = this.props
         const activeEventClass = this.props.isActive ? 'bgc-grey-50' : ''
         const eventTypeClass = this.getEventTypeClassName(this.props.eventType)
 
@@ -34,6 +34,11 @@ export class EventItem extends React.Component {
                         <span className="fw-600 eventItemTitle">{title}</span>
                         <div className="c-grey-600">
                             <span className="c-grey-700 eventItemDate">{date}</span>
+                        </div>
+                        <div className="c-grey-600">
+                            <span className="c-grey-700 eventItemDate">
+                                Timeline: {T0T1}, {T1E}, {ET2}, {T2T3}
+                            </span>
                         </div>
                     </div>
                 </a>
