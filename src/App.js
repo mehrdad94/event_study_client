@@ -10,12 +10,12 @@ import { Unavailable } from './components/Unavailable/Unavailable'
 import Setting from './views/Setting/Setting'
 import './App.scss'
 
-const CREATE_STOCK = "Create a Stock"
-const CREATE_STOCK_DESCRIPTION = "First of all you need to create a stock name."
+const CREATE_CATEGORY = "Create a Category"
+const CREATE_CATEGORY_DESCRIPTION = "First of all you need to create a category."
 
 const unavailableProps = {
-  title: CREATE_STOCK,
-  description: CREATE_STOCK_DESCRIPTION,
+  title: CREATE_CATEGORY,
+  description: CREATE_CATEGORY_DESCRIPTION,
   isActive: true,
   zIndex: 9
 }

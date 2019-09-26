@@ -119,7 +119,7 @@ export class StocksList extends React.Component {
                 <div className="layers h-100">
                     <div className="bdB layer w-100 pos-r">
                         <input type="text"
-                               placeholder="Stock Name"
+                               placeholder="Category Name"
                                name="Name"
                                ref="stockInput"
                                value={this.state.stockNameInputValue}

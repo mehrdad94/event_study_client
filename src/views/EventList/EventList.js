@@ -28,7 +28,7 @@ let eventDialogPhase = 'add' // add or edit
 let eventToModify
 
 const CREATE_EVENT = 'Create Event'
-const CREATE_EVENT_DESCRIPTION = 'Click the plus sign.'
+const CREATE_EVENT_DESCRIPTION = 'Click on the plus sign.'
 
 const unavailableProps = {
     title: CREATE_EVENT,
