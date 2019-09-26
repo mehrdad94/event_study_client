@@ -7,6 +7,11 @@ export class StocksItem extends React.Component {
         this.props.onDeleteClick()
     }
 
+    onEditClick = event => {
+        event.stopPropagation()
+        this.props.onEditClick()
+    }
+
     render () {
         const { title, description, descriptionColor } = this.props
 
@@ -24,6 +29,14 @@ export class StocksItem extends React.Component {
                 <div className="peers">
                     <div className="peer">
                         <a href="#"
+                           className="td-n c-deep-purple-500 cH-blue-500 fsz-md p-5"
+                           onClick={this.onEditClick}>
+                            <i className="ti-pencil"/>
+                        </a>
+                    </div>
+
+                    <div className="peer">
+                        <a href="#"
                            className="td-n c-red-500 cH-blue-500 fsz-md p-5 item-delete-btn"
                            onClick={this.onDeleteClick}>
                             <i className="ti-trash"/>
@@ -37,6 +50,7 @@ export class StocksItem extends React.Component {
 
 StocksItem.propTypes = {
     onDeleteClick: PropTypes.func,
+    onEditClick: PropTypes.func,
     onItemClick: PropTypes.func,
     title: PropTypes.string,
     description: PropTypes.string,
@@ -46,6 +60,7 @@ StocksItem.propTypes = {
 
 StocksItem.defaultProps = {
     onDeleteClick: () => {},
+    onEditClick: () => {},
     onItemClick: () => {},
     title: '',
     description: '',
