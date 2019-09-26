@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
+import './StocksItem.scss'
 export class StocksItem extends React.Component {
     onDeleteClick = event => {
         event.stopPropagation()
@@ -22,7 +22,7 @@ export class StocksItem extends React.Component {
         return (
             <div className={`peers fxw-nw ai-c p-20 bdB bgc-white bgcH-grey-50 cur-p item ${activeClass}`} onClick={this.props.onItemClick}>
                 <div className="peer peer-greed">
-                    <h6 className="mB-0 lh-1 fw-400 item-title">{title}</h6>
+                    <h6 className="mB-0 lh-1 fw-400 item-title stock-item-title">{title}</h6>
                     <small className={`lh-1 c-green-500 item-description ${color}`}>{description}</small>
                 </div>
 
