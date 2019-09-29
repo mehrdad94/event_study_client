@@ -15,11 +15,11 @@ import {
   validateTimelineKey,
   validateColumnName,
   validatePrices,
-  MarketModel
+  MarketModel,
+  MeanModel
 } from 'event-study'
 
 let jqueryModalRef
-
 const toSelectInput = value => ({ label: value, value })
 const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly', 'Monthly'].map(toSelectInput)
 
@@ -166,6 +166,14 @@ export class EventDialog extends React.Component {
     ].filter(item => item[1])
   }
 
+  validateMeanModelSources = () => {
+    const isStockPriceInvalid = validatePrices(this.state.stock, this.state.dateColumn, this.state.operationColumn) || ''
+
+    return [
+      ['stock', isStockPriceInvalid]
+    ].filter(item => item[1])
+  }
+
   validateMarketModelExternalSourceInputs = () => {
     const isStockSymbolValid = validateColumnName(this.state.stockSymbol) || ''
     const isStockTimeFrameValid = validateColumnName(this.state.stockTimeFrame) || ''
@@ -182,18 +190,44 @@ export class EventDialog extends React.Component {
     ].filter(item => item[1])
   }
 
+  validateMeanModelExternalSourceInputs = () => {
+    const isStockSymbolValid = validateColumnName(this.state.stockSymbol) || ''
+    const isStockTimeFrameValid = validateColumnName(this.state.stockTimeFrame) || ''
+    const isAlphavantageTokenValid = validateColumnName(this.state.alphavantageToken) || ''
+
+    return [
+      ['stockSymbol', isStockSymbolValid],
+      ['stockTimeFrame', isStockTimeFrameValid],
+      ['alphavantageToken', isAlphavantageTokenValid]
+    ].filter(item => item[1])
+  }
+
   validateAll = () => {
     const areSharedInputsValid = this.validateSharedInputs()
 
-    const areMarketModelInputsValid = this.state.useExternalSource ? this.validateMarketModelExternalSourceInputs() : this.validateMarketModelSources()
+    let areInputsValid
+
+    if (this.state.analysisModel) {
+      if (this.state.useExternalSource) {
+        areInputsValid = this.validateMarketModelExternalSourceInputs()
+      } else {
+        areInputsValid = this.validateMarketModelSources()
+      }
+    } else {
+      if (this.state.useExternalSource) {
+        areInputsValid = this.validateMeanModelExternalSourceInputs()
+      } else {
+        areInputsValid = this.validateMeanModelSources()
+      }
+    }
 
     const addError = (invalidFeedBacks, feedback) => {
       invalidFeedBacks[feedback[0]] = feedback[1].toString()
       return invalidFeedBacks
     }
 
-    if (areSharedInputsValid.length || areMarketModelInputsValid.length) {
-      return areMarketModelInputsValid.reduce(addError, areSharedInputsValid.reduce(addError, {}))
+    if (areSharedInputsValid.length || areInputsValid.length) {
+      return areInputsValid.reduce(addError, areSharedInputsValid.reduce(addError, {}))
     } else return null
   }
 
@@ -208,13 +242,14 @@ export class EventDialog extends React.Component {
       } = this.state
 
       this.setState({ loading: true })
-      Promise.all([
-        getStockData(stockSymbol, stockTimeFrame, alphavantageToken),
-        getStockData(marketSymbol, marketTimeFrame, alphavantageToken)
-      ]).then(result => {
+
+      const promises = [getStockData(stockSymbol, stockTimeFrame, alphavantageToken)]
+      if (this.state.analysisModel) promises.push(getStockData(marketSymbol, marketTimeFrame, alphavantageToken))
+
+      Promise.all(promises).then(result => {
         this.setState({
           stock: result[0],
-          market: result[1],
+          market: result[1] || [],
           loading: false
         })
         resolve()
@@ -235,7 +270,8 @@ export class EventDialog extends React.Component {
       operationColumn
     }]
 
-    const statsResult = MarketModel({ calendar })[0]
+    console.log(MeanModel)
+    const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
 
     if (!is(Object, statsResult) || statsResult['errors']) {
       this.setState({
@@ -386,7 +422,6 @@ export class EventDialog extends React.Component {
                         <div className="col-sm-2">
                           <div className="custom-control custom-checkbox">
                             <input type="checkbox"
-                                   disabled
                                    className="custom-control-input"
                                    id="toggleMarketModel"
                                    checked={ this.state.analysisModel }
@@ -440,7 +475,6 @@ export class EventDialog extends React.Component {
                         <div className="col-sm-2">
                           <div className="custom-control custom-checkbox mt-2">
                             <input type="checkbox"
-                                   disabled
                                    className="custom-control-input"
                                    id="toggleMarketModel"
                                    checked={ this.state.analysisModel }
