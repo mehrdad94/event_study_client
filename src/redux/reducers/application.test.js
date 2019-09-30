@@ -4,7 +4,8 @@ import {
   SHOW_SETTING,
   SHOW_STOCK_LIST,
   HIDE_STOCK_LIST,
-  SET_ACTIVE_MAIN_FRAME
+  SET_ACTIVE_MAIN_FRAME,
+  SET_IS_FIRST_TIME_VISIT
 } from '../ActionTypes'
 
 describe('application reducer', function () {
@@ -74,6 +75,21 @@ describe('application reducer', function () {
     const result = {
       activeMainFrame: frame
     }
+    expect(application(initialState, action)).toEqual(result)
+  })
+
+  it('should set is first time visit', function () {
+    const value = false
+
+    const action = {
+      type: SET_IS_FIRST_TIME_VISIT,
+      value
+    }
+
+    const result = {
+      isFirstTimeVisit: value
+    }
+
     expect(application(initialState, action)).toEqual(result)
   })
 })

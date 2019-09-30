@@ -3,7 +3,7 @@ import $ from 'jquery'
 import { connect } from 'react-redux'
 import { downloadJsonText } from '../../lib/helper'
 import { readAsText } from '../../lib/csv'
-import { showSetting, showStockList, hideStockList } from '../../redux/actions'
+import { showSetting, showStockList, hideStockList, setIsFirstTimeVisit } from '../../redux/actions'
 
 const EXPORT_FILE_NAME = 'Event study state'
 
@@ -43,6 +43,10 @@ export class Header extends React.Component {
     else this.props.showStockList()
   }
 
+  onHelpClick = () => {
+    this.props.setIsFirstTimeVisit(true)
+  }
+
   componentDidMount () {
     $('.navbar [data-toggle="tooltip"]').tooltip()
   }
@@ -58,9 +62,15 @@ export class Header extends React.Component {
                 <i className="ti-menu-alt"/>
               </a>
             </li>
+
+            <li onClick={this.onHelpClick}>
+              <a href="#">
+                <i className="ti-help-alt"/>
+              </a>
+            </li>
           </ul>
           <ul className="nav-right">
-            <li>
+            <li className="header-import-btn">
               <a href="#"
                  onClick={Header.onImportClick}
                  data-toggle="tooltip"
@@ -76,7 +86,7 @@ export class Header extends React.Component {
                      id="importStateInput"/>
             </li>
 
-            <li>
+            <li className="header-export-btn">
               <a href="#"
                  data-toggle="tooltip"
                  data-placement="bottom"
@@ -111,7 +121,8 @@ const mapStateToProps = state => {
 const actionCreators = {
   showSetting,
   showStockList,
-  hideStockList
+  hideStockList,
+  setIsFirstTimeVisit
 }
 
 export default connect(mapStateToProps, actionCreators)(Header)

@@ -125,12 +125,12 @@ export class StocksList extends React.Component {
                                value={this.state.stockNameInputValue}
                                onKeyDown={this.onKeyDown}
                                onChange={e => this.onInputChange(e.target.value, 'stockNameInputValue')}
-                               className="form-constrol p-15 bdrs-0 w-100 bdw-0"/>
+                               className="form-constrol p-15 bdrs-0 w-100 bdw-0 category-name-input"/>
 
                         {
                             this.state.phase === 'add' ? (
                               <button type="button"
-                                className="btn add btn-warning bdrs-50p w-2r p-0 h-2r pos-a r-10 t-10"
+                                className="btn add btn-warning bdrs-50p w-2r p-0 h-2r pos-a r-10 t-10 category-add-btn"
                                 onClick={this.onAddClick}>
                                   <i className="ti-plus"/>
                               </button>) :

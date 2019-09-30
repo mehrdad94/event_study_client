@@ -6,6 +6,7 @@ import StocksList from './views/StocksList/StocksList'
 import EventList from './views/EventList/EventList'
 import Analysis from './views/Analysis/Analysis'
 import Header from './views/Header/Header'
+import AppTour from './views/AppTour/AppTour'
 import { Unavailable } from './components/Unavailable/Unavailable'
 import Setting from './views/Setting/Setting'
 import './App.scss'
@@ -38,6 +39,7 @@ export class App extends React.Component {
     return (
       <div className={"h-100p " + (this.showStockList())}>
         <div className="page-container h-100p">
+          <AppTour/>
           <Setting/>
           <Header/>
           <main className='main-content bgc-grey-200'>

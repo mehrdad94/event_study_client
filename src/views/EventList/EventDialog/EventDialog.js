@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import $ from 'jquery'
 import is from 'ramda/src/is'
+import EventDialogTour from './EventDialogTour/EventDialogTour'
 import FormInput from '../../../components/FormInput/FormInput'
 import FormSelect from '../../../components/FormSelect/FormSelect'
 import FormPicker from '../../../components/FormDatepicker/FormDatepicker'
@@ -26,6 +27,7 @@ const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly'
 const genState = props => {
   const {
     loading = false,
+    showHelp = false,
     title = '',
     date = '',
     stock = [],
@@ -68,6 +70,7 @@ const genState = props => {
 
   return {
     loading,
+    showHelp,
     title,
     date,
     stock,
@@ -270,7 +273,6 @@ export class EventDialog extends React.Component {
       operationColumn
     }]
 
-    console.log(MeanModel)
     const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
 
     if (!is(Object, statsResult) || statsResult['errors']) {
@@ -333,6 +335,18 @@ export class EventDialog extends React.Component {
     }
   }
 
+  onHelpClick = () => {
+    this.setState({
+      showHelp: true
+    })
+  }
+
+  onTourCloseClick = () => {
+    this.setState({
+      showHelp: false
+    })
+  }
+
   componentDidMount () {
     jqueryModalRef = $(this.refs.modal)
 
@@ -375,19 +389,25 @@ export class EventDialog extends React.Component {
           <div className="modal-content">
             <div className="bd p-15 modal-header">
               <h5 className="m-0 dialog-title">
+                <a href="#" className="icon-button pl-0 pos-r t-2" onClick={this.onHelpClick}>
+                  <i className="ti-help-alt"/>
+                </a>
+
                 {this.props.dialogTitle}
               </h5>
+
               <button type="button" className="close float-right" data-dismiss="modal" aria-label="Close" disabled={this.state.loading}>
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div className="modal-body">
+              <EventDialogTour isOpen={this.state.showHelp} onRequestClose={this.onTourCloseClick}/>
               {
                 this.state.invalidFeedBacks.globalError ? (<div className="alert alert-danger" role="alert">{this.state.invalidFeedBacks.globalError}!</div>) : null
               }
 
               <form>
-                <div className="form-group">
+                <div className="form-group event-dialog-title-input">
                   <FormInput
                     inputLabel={ 'Event title' }
                     inputValue={ this.state.title }
@@ -396,7 +416,7 @@ export class EventDialog extends React.Component {
                 </div>
 
                 <div className="row">
-                  <div className="col-md-12">
+                  <div className="col-md-12  event-dialog-date-input">
                     <FormPicker pickerLabel={ 'Date' }
                                 pickerValue={ this.state.date }
                                 invalidFeedback={ this.state.invalidFeedBacks.date }
@@ -404,7 +424,7 @@ export class EventDialog extends React.Component {
                   </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group event-dialog-external-resource-checkbox">
                   <div className="custom-control custom-checkbox">
                     <input type="checkbox"
                            className="custom-control-input"
@@ -473,7 +493,7 @@ export class EventDialog extends React.Component {
                     ) : (
                       <Fragment>
                         <div className="col-sm-2">
-                          <div className="custom-control custom-checkbox mt-2">
+                          <div className="custom-control custom-checkbox mt-2 event-dialog-analysis-model-checkbox">
                             <input type="checkbox"
                                    className="custom-control-input"
                                    id="toggleMarketModel"
@@ -509,9 +529,9 @@ export class EventDialog extends React.Component {
 
                 {
                   this.state.useExternalSource ? (
-                    <div className="form-group">
+                    <div className="form-group event-dialog-alphavantage-token-input">
                       <FormInput
-                        inputLabel={ 'Alphavantage Token' }
+                        inputLabel={ 'Alphavantage Token: <a href="https://www.alphavantage.co/support/#api-key" target="_blank">get your token</a>' }
                         inputValue={ this.state.alphavantageToken }
                         invalidFeedback={ this.state.invalidFeedBacks.alphavantageToken }
                         onChange={ event => this.handleChange('alphavantageToken', event) }/>

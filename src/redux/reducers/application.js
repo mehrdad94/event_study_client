@@ -3,7 +3,7 @@ import {
   HIDE_SETTING,
   SHOW_STOCK_LIST,
   HIDE_STOCK_LIST,
-  SET_ACTIVE_MAIN_FRAME
+  SET_ACTIVE_MAIN_FRAME, SET_IS_FIRST_TIME_VISIT
 } from '../ActionTypes'
 
 const EVENT_LIST = 'EVENT_LIST'
@@ -12,7 +12,8 @@ const ANALYSIS = 'ANALYSIS'
 const initialState = {
   showSetting: false,
   stockListStatus: true,
-  activeMainFrame: EVENT_LIST
+  activeMainFrame: EVENT_LIST,
+  isFirstTimeVisit: true
 }
 
 const mainFrames = [EVENT_LIST, ANALYSIS]
@@ -49,6 +50,11 @@ export default function application (state = initialState, action) {
         }
       } else return state
     }
+    case SET_IS_FIRST_TIME_VISIT:
+      return {
+        ...state,
+        isFirstTimeVisit: action.value
+      }
     default:
       return state
   }

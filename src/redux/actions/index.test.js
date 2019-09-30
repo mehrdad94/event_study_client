@@ -23,7 +23,8 @@ import {
     SHOW_STOCK_LIST,
     HIDE_STOCK_LIST,
     SET_ACTIVE_MAIN_FRAME,
-    SET_DEFAULT_EVENT_DATE_FORMAT
+    SET_DEFAULT_EVENT_DATE_FORMAT,
+    SET_IS_FIRST_TIME_VISIT
 } from '../ActionTypes'
 
 import {
@@ -51,7 +52,8 @@ import {
     showStockList,
     hideStockList,
     setActiveMainFrame,
-    setDefaultEventDateFormat
+    setDefaultEventDateFormat,
+    setIsFirstTimeVisit
 } from './index'
 
 describe('should test actions', function () {
@@ -363,6 +365,14 @@ describe('should test actions', function () {
 
         expect(setDefaultEventDateFormat(value)).toEqual({
             type: SET_DEFAULT_EVENT_DATE_FORMAT,
+            value
+        })
+    })
+    it('should set first time visit', function () {
+        const value = false
+
+        expect(setIsFirstTimeVisit(value)).toEqual({
+            type: SET_IS_FIRST_TIME_VISIT,
             value
         })
     })

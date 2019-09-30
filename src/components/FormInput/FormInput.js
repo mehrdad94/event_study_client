@@ -15,7 +15,7 @@ export class FormInput extends React.Component {
   render () {
     return (
       <Fragment>
-        <label className="fw-500">{this.props.inputLabel}</label>
+        <label className="fw-500" dangerouslySetInnerHTML={{__html: this.props.inputLabel}}/>
 
         <input className={"form-control bdc-grey-200" + (this.props.invalidFeedback ? ' is-invalid' : '') }
                onChange={this.props.onChange}

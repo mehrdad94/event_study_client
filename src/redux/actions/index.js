@@ -23,7 +23,8 @@ import {
     SHOW_STOCK_LIST,
     HIDE_STOCK_LIST,
     SET_ACTIVE_MAIN_FRAME,
-    SET_DEFAULT_EVENT_DATE_FORMAT
+    SET_DEFAULT_EVENT_DATE_FORMAT,
+    SET_IS_FIRST_TIME_VISIT
 } from '../ActionTypes'
 
 export const setT0T1 = value => {
@@ -195,6 +196,12 @@ export const setActiveMainFrame = frame => {
 export const setDefaultEventDateFormat = value => {
     return {
         type: SET_DEFAULT_EVENT_DATE_FORMAT,
+        value
+    }
+}
+export const setIsFirstTimeVisit = value => {
+    return {
+        type: SET_IS_FIRST_TIME_VISIT,
         value
     }
 }
