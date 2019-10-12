@@ -30,6 +30,7 @@ const genState = props => {
     showHelp = false,
     title = '',
     date = '',
+    dates = [],
     stock = [],
     stockSymbol = '',
     stockTimeFrame = 'Daily',
@@ -73,6 +74,7 @@ const genState = props => {
     showHelp,
     title,
     date,
+    dates,
     stock,
     stockSymbol,
     stockTimeFrame,
@@ -121,6 +123,23 @@ export class EventDialog extends React.Component {
       [type]: event.target.checked
     })
   }
+  onDeleteDate = index => {
+    const dates = [...this.state.dates]
+
+    dates.splice(index, 1)
+
+    this.setState({
+      dates
+    })
+  }
+
+  onDateChange = event => {
+    this.setState({
+      date: event.target.value
+    })
+
+    this.addDate()
+  }
   analysisCheckBoxClass = (checked) => {
     return checked ? 'col-sm-5' : 'col-sm-10'
   }
@@ -137,8 +156,34 @@ export class EventDialog extends React.Component {
         })
       })
   }
+
+  addDate = () => {
+    if (!this.state.date) return
+
+    // find duplicate
+    const duplicateIndex = this.state.dates.findIndex(d => d === this.state.date)
+    if (duplicateIndex !== -1) return;
+
+    const newDates = [...this.state.dates]
+
+    newDates.push(this.state.date)
+
+    this.setState({
+      dates: newDates
+    })
+  }
+
+  renderChips = () => {
+    return this.state.dates.map((date, index) => (
+      <div className="chip" key={index}>
+        <span>{date}</span>
+
+        <span className="chip-close-btn" onClick={() => { this.onDeleteDate(index) } }>&times;</span>
+      </div>
+    ))
+  }
+
   validateSharedInputs = () => {
-    const isTitleInvalid = validateColumnName(this.state.title) || ''
     const isValidDate = validateColumnName(this.state.date) || ''
     const isDateColumnInvalid = validateColumnName(this.state.dateColumn) || ''
     const isOperationColumnInvalid = validateColumnName(this.state.operationColumn) || ''
@@ -148,7 +193,6 @@ export class EventDialog extends React.Component {
     const isT2T3Invalid = validateTimelineKey(this.state.T2T3) || ''
 
     return [
-      ['title', isTitleInvalid],
       ['date', isValidDate],
       ['dateColumn', isDateColumnInvalid],
       ['operationColumn', isOperationColumnInvalid],
@@ -260,37 +304,53 @@ export class EventDialog extends React.Component {
     })
   }
   onAfterValidate = () => {
-    const { date, title, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = this.state
+    const { date, dates, title = 'No Title', T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = this.state
+
+    if (!dates.length) dates.push(date)
 
     const timeline = { T0T1, T1E, ET2, T2T3 }
 
-    const calendar = [{
-      date,
-      stock,
-      market,
-      timeline,
-      dateColumn,
-      operationColumn
-    }]
+    let hasError = false
+    // extract dates
+    const statsResults = dates.map(date => {
+      const calendar = [{
+        date,
+        stock,
+        market,
+        timeline,
+        dateColumn,
+        operationColumn
+      }]
 
-    const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
+      const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
 
-    if (!is(Object, statsResult) || statsResult['errors']) {
-      this.setState({
-        invalidFeedBacks: {
-          globalError: 'Invalid Data!'
-        }
-      })
-      return
-    }
+
+      if (!is(Object, statsResult) || statsResult['errors']) {
+        this.setState({
+          invalidFeedBacks: {
+            globalError: 'Invalid Data!'
+          }
+        })
+
+        hasError = true
+      }
+
+      return statsResult
+    })
+
+    if (hasError) return
+
+    const eventsData = dates.map(date => {
+      return {
+        date, title, T0T1, T1E, ET2, T2T3, dateColumn, operationColumn
+      }
+    })
 
     EventDialog.hideModal()
 
     this.props.onAccept({
-      eventData: {
-        date, title, T0T1, T1E, ET2, T2T3, dateColumn, operationColumn
-      },
-      statsResult
+      eventsData,
+      statsResults
     })
   }
   onAccept = () => {
@@ -416,11 +476,21 @@ export class EventDialog extends React.Component {
                 </div>
 
                 <div className="row">
-                  <div className="col-md-12  event-dialog-date-input">
-                    <FormPicker pickerLabel={ 'Date' }
+                  <div className="col-md-12 event-dialog-date-input">
+                    <FormPicker pickerLabel={ 'Dates' }
                                 pickerValue={ this.state.date }
                                 invalidFeedback={ this.state.invalidFeedBacks.date }
-                                onChange={ event => this.handleChange('date', event) }/>
+                                onChange={ event => this.onDateChange(event) }/>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-12">
+                    <div className="form-group">
+                      {
+                        this.renderChips()
+                      }
+                    </div>
                   </div>
                 </div>
 

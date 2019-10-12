@@ -15,7 +15,7 @@ export class FormDatepicker extends React.Component {
   }
 
   componentDidMount (){
-    datePicker = $('.event-date').datepicker({ format: this.props.defaultEventDateFormat }).on('changeDate', this.handleChange)
+    datePicker = $('.event-date').datepicker({ format: this.props.defaultEventDateFormat, autoclose: true }).on('changeDate', this.handleChange)
   }
 
   componentDidUpdate (prevProps) {

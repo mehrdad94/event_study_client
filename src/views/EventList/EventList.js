@@ -114,16 +114,22 @@ export class EventList extends React.Component {
         })
     }
 
-    onEventDialogAccept = ({ eventData, statsResult }) => {
-        if (eventDialogPhase === 'add') {
-            eventData.key = uuid()
-            this.props.createAnalysis(statsResult, this.props.stockKey, eventData.key)
-            this.props.createEvent(eventData, this.props.stockKey)
-        } else {
-            eventData.key = eventToModify.key
-            this.props.updateEvent(eventData, this.props.stockKey)
-            this.props.updateAnalysis(statsResult, this.props.stockKey, eventData.key)
-        }
+    onEventDialogAccept = ({ eventsData, statsResults }) => {
+        statsResults.forEach((statsResult, index) => {
+            const eventData = eventsData[index]
+
+            if (!eventData) return
+
+            if (eventDialogPhase === 'add') {
+                eventData.key = uuid()
+                this.props.createAnalysis(statsResult, this.props.stockKey, eventData.key)
+                this.props.createEvent(eventData, this.props.stockKey)
+            } else {
+                eventData.key = eventToModify.key
+                this.props.updateEvent(eventData, this.props.stockKey)
+                this.props.updateAnalysis(statsResult, this.props.stockKey, eventData.key)
+            }
+        })
     }
 
     onDeleteEventAccept = () => {
