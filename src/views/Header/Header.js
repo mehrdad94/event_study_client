@@ -3,7 +3,7 @@ import $ from 'jquery'
 import { connect } from 'react-redux'
 import { downloadJsonText } from '../../lib/helper'
 import { readAsText } from '../../lib/csv'
-import { showSetting, showStockList, hideStockList, setIsFirstTimeVisit } from '../../redux/actions'
+import { showSetting, showStockList, hideStockList } from '../../redux/actions'
 
 const EXPORT_FILE_NAME = 'Event study state'
 
@@ -44,7 +44,6 @@ export class Header extends React.Component {
   }
 
   onHelpClick = () => {
-    this.props.setIsFirstTimeVisit(true)
   }
 
   componentDidMount () {
@@ -121,8 +120,7 @@ const mapStateToProps = state => {
 const actionCreators = {
   showSetting,
   showStockList,
-  hideStockList,
-  setIsFirstTimeVisit
+  hideStockList
 }
 
 export default connect(mapStateToProps, actionCreators)(Header)
