@@ -15,7 +15,10 @@ export class FormDatepicker extends React.Component {
   }
 
   componentDidMount (){
-    datePicker = $('.event-date').datepicker({ format: this.props.defaultEventDateFormat, autoclose: true }).on('changeDate', this.handleChange)
+    datePicker = $('.event-date').datepicker({
+      format: this.props.defaultEventDateFormat,
+      autoclose: true
+    }).on('hide', this.handleChange)
   }
 
   componentDidUpdate (prevProps) {
@@ -23,7 +26,10 @@ export class FormDatepicker extends React.Component {
     this.pickerRef.current.value = this.props.pickerValue
 
     if (this.props.defaultEventDateFormat !== prevProps.defaultEventDateFormat) {
-      datePicker.datepicker('destroy').datepicker({ format: this.props.defaultEventDateFormat || defaultEventDateFormat}).on('changeDate', this.handleChange)
+      datePicker.datepicker('destroy').datepicker({
+        updateViewDate: false,
+        format: this.props.defaultEventDateFormat || defaultEventDateFormat
+      }).on('changeDate', this.handleChange)
     }
   }
 

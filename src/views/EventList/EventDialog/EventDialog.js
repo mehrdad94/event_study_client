@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import $ from 'jquery'
 import is from 'ramda/src/is'
+import moment from 'moment'
 import EventDialogTour from './EventDialogTour/EventDialogTour'
 import FormInput from '../../../components/FormInput/FormInput'
 import FormSelect from '../../../components/FormSelect/FormSelect'
@@ -159,6 +160,9 @@ export class EventDialog extends React.Component {
 
   addDate = () => {
     if (!this.state.date) return
+    const parsedDate = moment(this.state.date, this.state.defaultEventDateFormat.toUpperCase(), true)
+    console.log(parsedDate)
+    if (!parsedDate.isValid()) return
 
     // find duplicate
     const duplicateIndex = this.state.dates.findIndex(d => d === this.state.date)
