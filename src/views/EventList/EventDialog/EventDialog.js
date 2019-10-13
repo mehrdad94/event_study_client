@@ -478,6 +478,7 @@ export class EventDialog extends React.Component {
                 <div className="row">
                   <div className="col-md-12 event-dialog-date-input">
                     <FormPicker pickerLabel={ 'Dates' }
+                                defaultEventDateFormat={this.state.defaultEventDateFormat}
                                 pickerValue={ this.state.date }
                                 invalidFeedback={ this.state.invalidFeedBacks.date }
                                 onChange={ event => this.onDateChange(event) }/>

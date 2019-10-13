@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import $ from 'jquery'
 
 let datePicker
-
+const defaultEventDateFormat = 'yyyy-mm-dd'
 export class FormDatepicker extends React.Component {
   constructor(props) {
     super(props)
@@ -23,7 +23,7 @@ export class FormDatepicker extends React.Component {
     this.pickerRef.current.value = this.props.pickerValue
 
     if (this.props.defaultEventDateFormat !== prevProps.defaultEventDateFormat) {
-      datePicker.datepicker('destroy').datepicker({ format: this.props.defaultEventDateFormat }).on('changeDate', this.handleChange)
+      datePicker.datepicker('destroy').datepicker({ format: this.props.defaultEventDateFormat || defaultEventDateFormat}).on('changeDate', this.handleChange)
     }
   }
 
@@ -69,7 +69,7 @@ FormDatepicker.propTypes = {
 }
 
 FormDatepicker.defaultProps = {
-  defaultEventDateFormat: 'yyyy-mm-dd',
+  defaultEventDateFormat,
   pickerValue: '',
   pickerLabel: '',
   invalidFeedback: '',
