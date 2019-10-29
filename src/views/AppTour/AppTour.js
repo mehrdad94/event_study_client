@@ -5,12 +5,16 @@ import { setIsFirstTimeVisit } from '../../redux/actions'
 
 const steps = [
   {
+    selector: '.header-help-btn',
+    content: 'Please hit this button to see how to use this application.'
+  },
+  {
     selector: '.category-name-input',
-    content: 'Specify name of your category first, for example, "Apple Net Incomes" it\'s just for organizing events better.',
+    content: 'Specify name of your category first, for example, "Apple Net Incomes" it\'s just for organizing events better.'
   },
   {
     selector: '.category-add-btn',
-    content: 'Add that Category',
+    content: 'Add that Category'
   },
   {
     selector: '.open-setting-btn',
@@ -18,11 +22,11 @@ const steps = [
   },
   {
     selector: '.header-export-btn',
-    content: 'Save and download your data.'
+    content: 'Save and download your information.'
   },
   {
     selector: '.header-import-btn',
-    content: 'Load your saved data sets.'
+    content: 'Load your saved information.'
   }
 ]
 

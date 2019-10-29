@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import $ from 'jquery'
 import { connect } from 'react-redux'
+import { Help } from '../Help/Help'
 import { downloadJsonText } from '../../lib/helper'
 import { readAsText } from '../../lib/csv'
 import { showSetting, showStockList, hideStockList } from '../../redux/actions'
@@ -8,6 +9,10 @@ import { showSetting, showStockList, hideStockList } from '../../redux/actions'
 const EXPORT_FILE_NAME = 'Event study state'
 
 export class Header extends React.Component {
+  state = {
+    isHelpActive: false
+  }
+
   static onExportClick () {
     const date = new Date()
     const currentYear = date.getFullYear()
@@ -44,69 +49,83 @@ export class Header extends React.Component {
   }
 
   onHelpClick = () => {
+    this.setState({
+      isHelpActive: true
+    })
   }
-
+  onHelpDialogClose = () => {
+    this.setState({
+      isHelpActive: false
+    })
+  }
   componentDidMount () {
     $('.navbar [data-toggle="tooltip"]').tooltip()
   }
 
   render () {
     return (
-      <div className="header navbar">
-        <div className="header-container">
-          <ul className="nav-left">
-            <li className="stock-list-toggle d-lg-none"
-                onClick={this.onStockListToggleClick}>
-              <a href="#">
-                <i className="ti-menu-alt"/>
-              </a>
-            </li>
+      <Fragment>
+        <Help isActive={this.state.isHelpActive} onModalClose={this.onHelpDialogClose}/>
 
-            <li onClick={this.onHelpClick}>
-              <a href="#">
-                <i className="ti-help-alt"/>
-              </a>
-            </li>
-          </ul>
-          <ul className="nav-right">
-            <li className="header-import-btn">
-              <a href="#"
-                 onClick={Header.onImportClick}
-                 data-toggle="tooltip"
-                 data-placement="bottom"
-                 data-original-title="Load data">
-                <i className="ti-folder"/>
-              </a>
+        <div className="header navbar">
+          <div className="header-container">
+            <ul className="nav-left">
+              <li className="stock-list-toggle d-lg-none"
+                  onClick={this.onStockListToggleClick}>
+                <a href="#">
+                  <i className="ti-menu-alt"/>
+                </a>
+              </li>
 
-              <input type="file"
-                     accept=".json"
-                     onChange={this.onImportStateInputChange}
-                     className="d-none"
-                     id="importStateInput"/>
-            </li>
+              <li onClick={this.onHelpClick} className="header-help-btn">
+                <a href="#"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   data-original-title="Help">
+                  <i className="ti-help-alt"/>
+                </a>
+              </li>
+            </ul>
+            <ul className="nav-right">
+              <li className="header-import-btn">
+                <a href="#"
+                   onClick={Header.onImportClick}
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   data-original-title="Load data">
+                  <i className="ti-folder"/>
+                </a>
 
-            <li className="header-export-btn">
-              <a href="#"
-                 data-toggle="tooltip"
-                 data-placement="bottom"
-                 data-original-title="Save data"
-                 onClick={Header.onExportClick}>
-                <i className="ti-export"/>
-              </a>
-            </li>
+                <input type="file"
+                       accept=".json"
+                       onChange={this.onImportStateInputChange}
+                       className="d-none"
+                       id="importStateInput"/>
+              </li>
 
-            <li className="open-setting-btn"
-                data-toggle="tooltip"
-                data-placement="bottom"
-                data-original-title="Setting"
-                onClick={this.props.showSetting}>
-              <a href="#">
-                <i className="ti-settings"/>
-              </a>
-            </li>
-          </ul>
+              <li className="header-export-btn">
+                <a href="#"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   data-original-title="Save data"
+                   onClick={Header.onExportClick}>
+                  <i className="ti-export"/>
+                </a>
+              </li>
+
+              <li className="open-setting-btn"
+                  data-toggle="tooltip"
+                  data-placement="bottom"
+                  data-original-title="Setting"
+                  onClick={this.props.showSetting}>
+                <a href="#">
+                  <i className="ti-settings"/>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
+      </Fragment>
     )
   }
 }
