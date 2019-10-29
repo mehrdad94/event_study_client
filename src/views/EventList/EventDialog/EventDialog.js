@@ -24,7 +24,10 @@ import {
 let jqueryModalRef
 const toSelectInput = value => ({ label: value, value })
 const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly', 'Monthly'].map(toSelectInput)
-
+const extractErrorFromResults = result => {
+  if (typeof result === 'string') return result
+  else return 'Invalid data'
+}
 const genState = props => {
   const {
     loading = false,
@@ -161,7 +164,7 @@ export class EventDialog extends React.Component {
   addDate = () => {
     if (!this.state.date) return
     const parsedDate = moment(this.state.date, this.state.defaultEventDateFormat.toUpperCase(), true)
-    console.log(parsedDate)
+
     if (!parsedDate.isValid()) return
 
     // find duplicate
@@ -328,11 +331,10 @@ export class EventDialog extends React.Component {
 
       const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
 
-
       if (!is(Object, statsResult) || statsResult['errors']) {
         this.setState({
           invalidFeedBacks: {
-            globalError: 'Invalid Data!'
+            globalError: extractErrorFromResults(statsResult)
           }
         })
 
