@@ -297,17 +297,33 @@ export class EventDialog extends React.Component {
 
       this.setState({ loading: true })
 
-      const promises = [getStockData(stockSymbol, stockTimeFrame, alphavantageToken)]
-      if (this.state.analysisModel) promises.push(getStockData(marketSymbol, marketTimeFrame, alphavantageToken))
+      const promises = [() => getStockData(stockSymbol, stockTimeFrame, alphavantageToken)]
+      if (this.state.analysisModel) promises.push(() => getStockData(marketSymbol, marketTimeFrame, alphavantageToken))
 
-      Promise.all(promises).then(result => {
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+      // fetch by delay
+      promises.reduce((promise, promiseFunction, idx) => {
+        return promise.then(() => {
+          return Promise.all([delay(500), promiseFunction()])
+        }).then(result => {
+          if (idx === 0) {
+            this.setState({
+              stock: result[1]
+            })
+          } else {
+            this.setState({
+              market: result[1]
+            })
+          }
+        }).catch(reject)
+      }, Promise.resolve()).then(() => {
         this.setState({
-          stock: result[0],
-          market: result[1] || [],
           loading: false
         })
+
         resolve()
-      }).catch(reject)
+      })
     })
   }
   onAfterValidate = () => {
