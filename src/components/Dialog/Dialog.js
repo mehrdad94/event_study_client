@@ -35,7 +35,7 @@ export class Dialog extends React.Component {
   render() {
     return (
       <div className="modal fade" ref='modal'>
-        <div className="modal-dialog confirm-dialog modal-dialog-centered" role="document">
+        <div className="modal-dialog confirm-dialog" role="document">
           <div className="modal-content">
             {
               this.props.header ? (
