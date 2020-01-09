@@ -6,10 +6,10 @@ import { StocksItem } from './StocksItem/StocksItem'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import './StocksList.scss'
 import PerfectScrollbar from 'perfect-scrollbar'
+import { deleteStockQuestion } from '../../configs/constants'
 
 let stockKeyToDelete
 let stockKeyToEdit
-const deleteStockQuestion = 'Do you want to delete that StocksItem?'
 
 export class StocksList extends React.Component {
     state = {

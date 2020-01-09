@@ -65,7 +65,7 @@ export class App extends React.Component {
           </main>
 
           <footer className="bdT ta-c p-30 lh-0 fsz-sm c-grey-600">
-            <span>This product is in alpha version so if you saw any issue please share with me: <a href="mailto:m_javidi@outlook.com">m_javidi@outlook.com</a>.</span>
+            <span>Report any issue to: <a href="mailto:m_javidi@outlook.com">m_javidi@outlook.com</a>.</span>
           </footer>
         </div>
       </div>

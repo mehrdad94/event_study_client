@@ -12,6 +12,7 @@ import FormFile from '../../../components/FormFile/FormFile'
 
 import { csvToJson } from '../../../lib/csv'
 import { getStockData } from '../../../lib/alphavantageApi'
+import { adjustmentRules, timeFrames } from '../../../configs/constants'
 
 import {
   validateTimelineKey,
@@ -22,8 +23,7 @@ import {
 } from 'event-study'
 
 let jqueryModalRef
-const toSelectInput = value => ({ label: value, value })
-const timeFrames = ['1min', '5min', '15min', '30min', '60min', 'Daily', 'Weekly', 'Monthly'].map(toSelectInput)
+
 const extractErrorFromResults = result => {
   if (typeof result === 'string') return result
   else return 'Invalid data'
@@ -44,6 +44,7 @@ const genState = props => {
     dateColumn = '',
     operationColumn = '',
     alphavantageToken = '',
+    adjustmentRule = '',
     T0T1 = '',
     T1E = '',
     ET2 = '',
@@ -65,6 +66,7 @@ const genState = props => {
       alphavantageToken: '',
       dateColumn: '',
       operationColumn: '',
+      adjustmentRule: '',
       T0T1: '',
       T1E: '',
       ET2: '',
@@ -88,6 +90,7 @@ const genState = props => {
     dateColumn,
     operationColumn,
     alphavantageToken,
+    adjustmentRule,
     T0T1,
     T1E,
     ET2,
@@ -327,7 +330,7 @@ export class EventDialog extends React.Component {
     })
   }
   onAfterValidate = () => {
-    const { date, dates, title = 'No Title', T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = this.state
+    const { date, dates, title = 'No Title', adjustmentRule, T0T1, T1E, ET2, T2T3, market, stock, dateColumn, operationColumn } = this.state
 
     if (!dates.length) dates.push(date)
 
@@ -342,7 +345,8 @@ export class EventDialog extends React.Component {
         market,
         timeline,
         dateColumn,
-        operationColumn
+        operationColumn,
+        unmatchedTradingDayStrategy: adjustmentRule
       }]
 
       const statsResult = this.state.analysisModel ? MarketModel({ calendar })[0] : MeanModel({ calendar })[0]
@@ -355,6 +359,8 @@ export class EventDialog extends React.Component {
         })
 
         hasError = true
+
+        this.scrollTop()
       }
 
       return statsResult
@@ -402,7 +408,7 @@ export class EventDialog extends React.Component {
         })
         .catch(error => {
           if (typeof error === 'object') {
-            error = JSON.stringify(error)
+            error = error.message || JSON.stringify(error)
           }
 
           this.setState({
@@ -411,6 +417,8 @@ export class EventDialog extends React.Component {
               globalError: error
             }
           })
+
+          this.scrollTop()
         })
     } else {
       this.onAfterValidate()
@@ -427,6 +435,10 @@ export class EventDialog extends React.Component {
     this.setState({
       showHelp: false
     })
+  }
+
+  scrollTop = () => {
+    this.refs.modalBody.scrollTop = 0
   }
 
   componentDidMount () {
@@ -482,7 +494,7 @@ export class EventDialog extends React.Component {
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div className="modal-body">
+            <div className="modal-body" ref="modalBody">
               <EventDialogTour isOpen={this.state.showHelp} onRequestClose={this.onTourCloseClick}/>
               {
                 this.state.invalidFeedBacks.globalError ? (<div className="alert alert-danger" role="alert">{this.state.invalidFeedBacks.globalError}!</div>) : null
@@ -649,6 +661,15 @@ export class EventDialog extends React.Component {
                 </div>
 
                 <div className="form-group">
+                  <FormSelect
+                    selectLabel={ 'Adjustment Rule for Non-Trading Days' }
+                    selectValue={ this.state.adjustmentRule }
+                    invalidFeedback={ this.state.invalidFeedBacks.adjustmentRule }
+                    selectOptions={ adjustmentRules }
+                    onChange={ event => this.handleChange('adjustmentRule', event) }/>
+                </div>
+
+                <div className="form-group">
                   <FormInput
                     inputLabel={ 'Estimation period (T0T1)' }
                     inputValue={ this.state.T0T1 }
@@ -734,6 +755,7 @@ const mapStateToProps = state => {
     operationColumn: state.setting.operationColumn,
     alphavantageToken: state.setting.alphavantageToken,
     defaultEventDateFormat: state.setting.defaultEventDateFormat,
+    adjustmentRule: state.setting.adjustmentRule,
     T0T1: state.setting.T0T1,
     T1E: state.setting.T1E,
     ET2: state.setting.ET2,

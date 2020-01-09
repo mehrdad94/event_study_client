@@ -1,8 +1,10 @@
 import {
+    SET_ADJUSTMENT_RULE,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
     SET_T2T3,
+    RESET_SETTING_DEFAULTS,
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
     SET_ALPHAVANTAGE_TOKEN,
@@ -26,6 +28,19 @@ import {
     SET_DEFAULT_EVENT_DATE_FORMAT,
     SET_IS_FIRST_TIME_VISIT
 } from '../ActionTypes'
+
+export const setAdjustmentRule = value => {
+    return {
+        type: SET_ADJUSTMENT_RULE,
+        value
+    }
+}
+
+export const resetSettingDefaults = () => {
+    return {
+        type: RESET_SETTING_DEFAULTS
+    }
+}
 
 export const setT0T1 = value => {
     return {

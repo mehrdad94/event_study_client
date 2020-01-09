@@ -3,14 +3,24 @@ import {
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
     SET_ALPHAVANTAGE_TOKEN,
+    SET_ADJUSTMENT_RULE,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
     SET_T2T3,
-    SET_DEFAULT_EVENT_DATE_FORMAT
+    SET_DEFAULT_EVENT_DATE_FORMAT,
+    RESET_SETTING_DEFAULTS
 } from '../ActionTypes'
 
 describe('should test setting reducer', function () {
+    it('should reset settings defaults', function () {
+        const initialState = { alphavantageToken: 'something' }
+
+        const action = { type: RESET_SETTING_DEFAULTS }
+
+        expect(setting(initialState, action).alphavantageToken).toEqual('' )
+    })
+
     it('should set date field', function () {
         const initialState = {}
 
@@ -41,7 +51,17 @@ describe('should test setting reducer', function () {
         expect(setting(initialState, action)).toEqual({
             alphavantageToken: token
         })
-    });
+    })
+    it('should set adjustmentRule', function () {
+        const initialState = {}
+
+        const adjustmentRule = 'SKIP'
+
+        const action = { type: SET_ADJUSTMENT_RULE, value: adjustmentRule }
+
+        expect(setting(initialState, action)).toEqual({ adjustmentRule })
+    })
+
     it('should set T0T1', function () {
         const initialState = {}
 

@@ -2,26 +2,32 @@ import {
     SET_DATE_COLUMN,
     SET_OPERATION_COLUMN,
     SET_ALPHAVANTAGE_TOKEN,
+    SET_ADJUSTMENT_RULE,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
     SET_T2T3,
-    SET_DEFAULT_EVENT_DATE_FORMAT
+    SET_DEFAULT_EVENT_DATE_FORMAT,
+    RESET_SETTING_DEFAULTS
 } from '../ActionTypes'
 
-const dateColumn = 'Date'
-const operationColumn = 'Close'
-const alphavantageToken = ''
-const T0T1 = 40
-const T1E = 7
-const ET2 = 7
-const T2T3 = 5
-const defaultEventDateFormat = 'yyyy-mm-dd'
+import {
+    dateColumn,
+    operationColumn,
+    alphavantageToken,
+    adjustmentRule,
+    T0T1,
+    T1E,
+    ET2,
+    T2T3,
+    defaultEventDateFormat
+} from '../../configs/constants'
 
 const initialState = {
     dateColumn,
     operationColumn,
     alphavantageToken,
+    adjustmentRule,
     T0T1,
     T1E,
     ET2,
@@ -45,6 +51,11 @@ export default function setting (state = initialState, action) {
             return {
                 ...state,
                 alphavantageToken: action.token
+            }
+        case SET_ADJUSTMENT_RULE:
+            return {
+                ...state,
+                adjustmentRule: action.value
             }
         case SET_T0T1:
             return {
@@ -70,6 +81,10 @@ export default function setting (state = initialState, action) {
             return {
                 ...state,
                 defaultEventDateFormat: action.value
+            }
+        case RESET_SETTING_DEFAULTS:
+            return {
+                ...initialState
             }
         default:
             return state

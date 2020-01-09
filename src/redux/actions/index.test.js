@@ -1,4 +1,6 @@
 import {
+    SET_ADJUSTMENT_RULE,
+    RESET_SETTING_DEFAULTS,
     SET_T0T1,
     SET_T1E,
     SET_ET2,
@@ -28,6 +30,8 @@ import {
 } from '../ActionTypes'
 
 import {
+    setAdjustmentRule,
+    resetSettingDefaults,
     setT0T1,
     setT1E,
     setET2,
@@ -57,6 +61,25 @@ import {
 } from './index'
 
 describe('should test actions', function () {
+    it('should create an action that reset setting defaults', function () {
+        const result = {
+            type: RESET_SETTING_DEFAULTS,
+        }
+
+        expect(resetSettingDefaults()).toEqual(result)
+    })
+
+    it('should create an action to set Adjustment rule', function () {
+        const value = 'SKIP'
+
+        const result = {
+            type: SET_ADJUSTMENT_RULE,
+            value,
+        }
+
+        expect(setAdjustmentRule(value)).toEqual(result)
+    })
+
     it('should create an action to set T0T1', function () {
         const value = 1
 
