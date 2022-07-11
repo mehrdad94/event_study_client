@@ -9,7 +9,8 @@ import Header from './views/Header/Header'
 import AppTour from './views/AppTour/AppTour'
 import { Unavailable } from './components/Unavailable/Unavailable'
 import Setting from './views/Setting/Setting'
-import './App.scss'
+import '../node_modules/bootstrap/dist/css/bootstrap.css'
+import './App.css'
 
 const CREATE_CATEGORY = "Create a Category"
 const CREATE_CATEGORY_DESCRIPTION = "First of all you need to create a category."

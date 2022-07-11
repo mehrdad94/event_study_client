@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import './EventItem.scss'
+import './EventItem.css'
 
 export class EventItem extends React.Component {
     onDeleteClick = e => {

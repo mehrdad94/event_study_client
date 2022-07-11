@@ -1,0 +1,20 @@
+.main-wrapper {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+@media screen and (max-width: 992px) {
+  .close-stocks .main-wrapper {
+    margin-left: 0;
+  }
+}
+@media screen and (max-width: 576px) {
+  .main-wrapper {
+    display: none;
+  }
+  .close-stocks .main-wrapper {
+    display: block;
+  }
+}
+
+/*# sourceMappingURL=App.css.map */

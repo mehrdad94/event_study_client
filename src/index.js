@@ -11,7 +11,7 @@ import { store, persistor } from './redux/store'
 import { Loader } from './components/Loader/Loader'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
-import './styles/index.scss'
+import './styles/index.css'
 
 const ActiveLoader = () => <Loader active={true}/>
 

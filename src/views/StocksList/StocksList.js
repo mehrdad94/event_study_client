@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { createStock, updateStock, deleteStock, selectStock } from '../../redux/actions/index'
 import { StocksItem } from './StocksItem/StocksItem'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
-import './StocksList.scss'
+import './StocksList.css'
 import PerfectScrollbar from 'perfect-scrollbar'
 import { deleteStockQuestion } from '../../configs/constants'
 

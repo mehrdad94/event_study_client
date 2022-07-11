@@ -17,7 +17,7 @@ import { EventItem } from './EventItem/EventItem'
 import EventDialog from './EventDialog/EventDialog'
 import { ConfirmModal } from '../../components/ConfirmDialog/ConfirmModal'
 import { Unavailable } from '../../components/Unavailable/Unavailable'
-import './EventList.scss'
+import './EventList.css'
 import PerfectScrollbar from 'perfect-scrollbar'
 
 const deleteConfirmModalQuestion = 'Are you sure that you want to delete this Event?'

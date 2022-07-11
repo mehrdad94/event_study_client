@@ -1,0 +1,8 @@
+.stock-item-title {
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/*# sourceMappingURL=StocksItem.css.map */

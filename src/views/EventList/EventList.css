@@ -1,0 +1,9 @@
+#event-items {
+  height: 100%;
+}
+
+.event-items-wrap {
+  height: calc(100% - 104px);
+}
+
+/*# sourceMappingURL=EventList.css.map */

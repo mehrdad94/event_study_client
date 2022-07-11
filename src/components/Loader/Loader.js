@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import './Loader.scss'
+import './Loader.css'
 
 export class Loader extends React.Component {
     loaderClassName = () => {

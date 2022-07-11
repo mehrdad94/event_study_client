@@ -1,0 +1,9 @@
+#analysis-scroll-container {
+  max-height: 100%;
+}
+
+.analysis-scroll-container-wrap {
+  height: calc(100% - 104px);
+}
+
+/*# sourceMappingURL=Analysis.css.map */
