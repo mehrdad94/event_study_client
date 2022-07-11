@@ -13,7 +13,7 @@
     "event-study": "^2.7.2",
     "immutability-helper": "^3.0.1",
     "jquery": "^3.4.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "perfect-scrollbar": "^1.4.0",
     "popper.js": "^1.15.0",
     "prop-types": "^15.7.2",
